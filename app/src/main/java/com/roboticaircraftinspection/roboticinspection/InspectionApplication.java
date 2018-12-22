@@ -27,9 +27,14 @@ public class InspectionApplication extends Application {
     private Handler mHandler;
     private DJISDKManager.SDKManagerCallback mDJISDKManagerCallback;
 
+    private static Context mContext;
     private Application instance;
     public void setContext(Application application) {
         instance = application;
+        mContext = this;
+    }
+    public static Context getContext(){
+        return mContext;
     }
 
     @Override
@@ -166,5 +171,4 @@ public class InspectionApplication extends Application {
             getApplicationContext().sendBroadcast(intent);
         }
     };
-
 }
