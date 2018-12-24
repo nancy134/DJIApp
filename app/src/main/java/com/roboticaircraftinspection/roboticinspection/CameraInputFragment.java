@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.roboticaircraftinspection.roboticinspection.models.AircraftInput;
+import com.roboticaircraftinspection.roboticinspection.models.CameraInput;
 
-public class AircraftInputFragment extends Fragment {
+public class CameraInputFragment extends Fragment {
     View view;
     Button nextButton;
     OnAircraftInputNextSelectedListener mCallback;
@@ -19,19 +19,19 @@ public class AircraftInputFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_aircraft_input, container, false);
+        view = inflater.inflate(R.layout.fragment_camera_input, container, false);
         nextButton = (Button) view.findViewById(R.id.btn_next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AircraftInput aircraftInput = new AircraftInput();
+                CameraInput cameraInput = new CameraInput();
                 EditText CDist = getView().findViewById(R.id.CDist);
-                aircraftInput.CDist = CDist.getText().toString();
+                cameraInput.CDist = CDist.getText().toString();
                 EditText COZoom = getView().findViewById(R.id.COZoom);
-                aircraftInput.COZoom = COZoom.getText().toString();
+                cameraInput.COZoom = COZoom.getText().toString();
                 EditText CDZoom = getView().findViewById(R.id.CDZoom);
-                aircraftInput.CDZoom = CDZoom.getText().toString();
-                mCallback.onAircraftInputNextSelected(aircraftInput);
+                cameraInput.CDZoom = CDZoom.getText().toString();
+                mCallback.onAircraftInputNextSelected(cameraInput);
             }
         });
         return view;
@@ -40,7 +40,7 @@ public class AircraftInputFragment extends Fragment {
         mCallback = (OnAircraftInputNextSelectedListener)activity;
     }
     public interface OnAircraftInputNextSelectedListener {
-        public void onAircraftInputNextSelected(AircraftInput aircraftInput);
+        public void onAircraftInputNextSelected(CameraInput cameraInput);
     }
 
 }

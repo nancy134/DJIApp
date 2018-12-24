@@ -6,15 +6,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-import com.roboticaircraftinspection.roboticinspection.models.AircraftInput;
+import com.roboticaircraftinspection.roboticinspection.models.CameraInput;
 import com.roboticaircraftinspection.roboticinspection.models.MissionOptions;
 import com.roboticaircraftinspection.roboticinspection.models.StartMission;
 
 public class CreateMissionActivity extends AppCompatActivity
-    implements MissionOptionsFragment.OnOptionsNextSelectedListener, AircraftInputFragment.OnAircraftInputNextSelectedListener{
+    implements MissionOptionsFragment.OnOptionsNextSelectedListener, CameraInputFragment.OnAircraftInputNextSelectedListener{
 
     MissionOptions mMissionOptions;
-    AircraftInput mAircraftInput;
+    CameraInput mCameraInput;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,14 +27,14 @@ public class CreateMissionActivity extends AppCompatActivity
     public void onOptionsNextSelected(MissionOptions options){
         mMissionOptions = new MissionOptions(options);
 
-        AircraftInputFragment aircraftInputFragment = new AircraftInputFragment();
-        aircraftInputFragment.setOnAircraftInputNextSelectedListener(this);
-        loadFragment(aircraftInputFragment);
+        CameraInputFragment cameraInputFragment = new CameraInputFragment();
+        cameraInputFragment.setOnAircraftInputNextSelectedListener(this);
+        loadFragment(cameraInputFragment);
     }
 
     @Override
-    public void onAircraftInputNextSelected(AircraftInput aircraftInput) {
-        mAircraftInput = aircraftInput;
+    public void onAircraftInputNextSelected(CameraInput cameraInput) {
+        mCameraInput = cameraInput;
         //public void CameraTestTimeline(
         //        String acModel,
         //boolean isFromTailEnd,
@@ -56,9 +56,9 @@ public class CreateMissionActivity extends AppCompatActivity
                     mMissionOptions.aircraftType,
                     isFromTailEnd,
                     mediaType,
-                    Double.valueOf(mAircraftInput.CDist),
-                    Double.valueOf(mAircraftInput.COZoom),
-                    Double.valueOf(mAircraftInput.CDZoom));
+                    Double.valueOf(mCameraInput.CDist),
+                    Double.valueOf(mCameraInput.COZoom),
+                    Double.valueOf(mCameraInput.CDZoom));
         }
         finish();
     }
