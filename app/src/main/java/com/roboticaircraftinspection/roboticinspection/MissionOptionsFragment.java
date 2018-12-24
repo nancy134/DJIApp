@@ -6,12 +6,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import com.roboticaircraftinspection.roboticinspection.models.AcModels;
 import com.roboticaircraftinspection.roboticinspection.models.MissionOptions;
+import com.roboticaircraftinspection.roboticinspection.models.StartMission;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class MissionOptionsFragment extends Fragment {
 
@@ -22,6 +28,16 @@ public class MissionOptionsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_mission_options, container, false);
+
+
+        Spinner aircraftType = view.findViewById(R.id.spinner_aircraft_type);
+        List<String> aircraftList = Arrays.asList(AcModels.ACMODELS);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(
+                view.getContext(),
+                R.layout.support_simple_spinner_dropdown_item,
+                aircraftList);
+        aircraftType.setAdapter(spinnerAdapter);
+        spinnerAdapter.notifyDataSetChanged();
 
         nextButton = (Button) view.findViewById(R.id.btn_next);
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -36,10 +52,14 @@ public class MissionOptionsFragment extends Fragment {
                 missionOptions.multiplePasses = passes.isChecked();
                 CheckBox geofence = getView().findViewById(R.id.geofence);
                 missionOptions.geofence = geofence.isChecked();
+
                 RadioGroup radioGroup = getView().findViewById(R.id.startgroup);
-                missionOptions.startMission = radioGroup.getCheckedRadioButtonId();
+                for (StartMission s: StartMission.values()){
+                    if (s.id() == radioGroup.getCheckedRadioButtonId()) missionOptions.startMission = s;
+                }
+
                 Spinner aircraftType = getView().findViewById(R.id.spinner_aircraft_type);
-                missionOptions.aircraftType = aircraftType.getSelectedItemId();
+                missionOptions.aircraftType = aircraftType.getSelectedItem().toString();
                 Spinner missionType = getView().findViewById(R.id.spinner_mission_type);
                 missionOptions.missionType = missionType.getSelectedItemId();
                 mCallback.onOptionsNextSelected(missionOptions);

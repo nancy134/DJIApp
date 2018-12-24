@@ -8,11 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.roboticaircraftinspection.roboticinspection.models.AircraftInput;
 import com.roboticaircraftinspection.roboticinspection.models.MissionOptions;
+import com.roboticaircraftinspection.roboticinspection.models.StartMission;
 
 public class CreateMissionActivity extends AppCompatActivity
     implements MissionOptionsFragment.OnOptionsNextSelectedListener, AircraftInputFragment.OnAircraftInputNextSelectedListener{
 
-
+    MissionOptions mMissionOptions;
+    AircraftInput mAircraftInput;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,6 +25,8 @@ public class CreateMissionActivity extends AppCompatActivity
 
     }
     public void onOptionsNextSelected(MissionOptions options){
+        mMissionOptions = new MissionOptions(options);
+
         AircraftInputFragment aircraftInputFragment = new AircraftInputFragment();
         aircraftInputFragment.setOnAircraftInputNextSelectedListener(this);
         loadFragment(aircraftInputFragment);
@@ -30,6 +34,32 @@ public class CreateMissionActivity extends AppCompatActivity
 
     @Override
     public void onAircraftInputNextSelected(AircraftInput aircraftInput) {
+        mAircraftInput = aircraftInput;
+        //public void CameraTestTimeline(
+        //        String acModel,
+        //boolean isFromTailEnd,
+        //String mediaType,
+        //double cDist,
+        //double cOZoom ,
+        //double cDZoom)
+        boolean isFromTailEnd = false;
+        if (mMissionOptions.startMission == StartMission.FROM_TAIL){
+            isFromTailEnd = true;
+        }
+        String mediaType = "BOTH";
+        if (mMissionOptions.photo && mMissionOptions.video) mediaType = "BOTH";
+        else if (mMissionOptions.photo) mediaType = "PHOTO";
+        else if (mMissionOptions.video) mediaType = "VIDEO";
+
+        if (!mMissionOptions.aircraftType.equals("OTHER")) {
+            CameraTestTimeline cameraTestTimeline = new CameraTestTimeline(
+                    mMissionOptions.aircraftType,
+                    isFromTailEnd,
+                    mediaType,
+                    Double.valueOf(mAircraftInput.CDist),
+                    Double.valueOf(mAircraftInput.COZoom),
+                    Double.valueOf(mAircraftInput.CDZoom));
+        }
         finish();
     }
 

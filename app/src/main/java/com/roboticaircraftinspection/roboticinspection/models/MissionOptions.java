@@ -4,7 +4,26 @@ public class MissionOptions {
     public Boolean video;
     public Boolean geofence;
     public Boolean multiplePasses;
-    public int startMission;
-    public long aircraftType;
+    public StartMission startMission;
+    public String aircraftType;
     public long missionType;
+
+    public MissionOptions (){
+        photo = true;
+        video = false;
+        geofence = true;
+        multiplePasses = false;
+        startMission = StartMission.FROM_NOSE;
+        aircraftType = AcModels.ACMODELS[0];
+        missionType = 0;
+    }
+    public MissionOptions(MissionOptions options){
+        photo = options.photo;
+        video = options.video;
+        geofence = options.geofence;
+        multiplePasses = options.multiplePasses;
+        startMission = options.startMission;
+        aircraftType = options.aircraftType;
+        missionType = options.missionType;
+    }
 }
