@@ -14,7 +14,7 @@ import com.roboticaircraftinspection.roboticinspection.models.CameraInput;
 public class CameraInputFragment extends Fragment {
     View view;
     Button nextButton;
-    OnAircraftInputNextSelectedListener mCallback;
+    OnCameraInputNextSelectedListener mCallback;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,16 +31,16 @@ public class CameraInputFragment extends Fragment {
                 cameraInput.COZoom = COZoom.getText().toString();
                 EditText CDZoom = getView().findViewById(R.id.CDZoom);
                 cameraInput.CDZoom = CDZoom.getText().toString();
-                mCallback.onAircraftInputNextSelected(cameraInput);
+                mCallback.onCameraInputNextSelected(cameraInput);
             }
         });
         return view;
     }
-    public void setOnAircraftInputNextSelectedListener(Activity activity){
-        mCallback = (OnAircraftInputNextSelectedListener)activity;
+    public void setOnCameraInputNextSelectedListener(Activity activity){
+        mCallback = (OnCameraInputNextSelectedListener)activity;
     }
-    public interface OnAircraftInputNextSelectedListener {
-        public void onAircraftInputNextSelected(CameraInput cameraInput);
+    public interface OnCameraInputNextSelectedListener {
+        public void onCameraInputNextSelected(CameraInput cameraInput);
     }
 
 }

@@ -5,13 +5,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.roboticaircraftinspection.roboticinspection.models.CameraInput;
 import com.roboticaircraftinspection.roboticinspection.models.MissionOptions;
+import com.roboticaircraftinspection.roboticinspection.models.OtherEndInput;
 import com.roboticaircraftinspection.roboticinspection.models.StartMission;
 
 public class CreateMissionActivity extends AppCompatActivity
-    implements MissionOptionsFragment.OnOptionsNextSelectedListener, CameraInputFragment.OnAircraftInputNextSelectedListener{
+    implements MissionOptionsFragment.OnOptionsNextSelectedListener,
+        CameraInputFragment.OnCameraInputNextSelectedListener,
+        OtherEndInputFragment.OnOtherEndInputNextSelectedListener
+{
 
     MissionOptions mMissionOptions;
     CameraInput mCameraInput;
@@ -26,14 +31,21 @@ public class CreateMissionActivity extends AppCompatActivity
     }
     public void onOptionsNextSelected(MissionOptions options){
         mMissionOptions = new MissionOptions(options);
+        Log.d("NANCY","missionType: "+mMissionOptions.missionType);
+        if (mMissionOptions.missionType == 2) {
+            OtherEndInputFragment otherEndInputFragment = new OtherEndInputFragment();
+            otherEndInputFragment.setOnOtherEndInputNextSelectedListener(this);
+            loadFragment(otherEndInputFragment);
+        } else if (!mMissionOptions.aircraftType.equals("OTHER")) {
 
-        CameraInputFragment cameraInputFragment = new CameraInputFragment();
-        cameraInputFragment.setOnAircraftInputNextSelectedListener(this);
-        loadFragment(cameraInputFragment);
+            CameraInputFragment cameraInputFragment = new CameraInputFragment();
+            cameraInputFragment.setOnCameraInputNextSelectedListener(this);
+            loadFragment(cameraInputFragment);
+        }
     }
 
     @Override
-    public void onAircraftInputNextSelected(CameraInput cameraInput) {
+    public void onCameraInputNextSelected(CameraInput cameraInput) {
         mCameraInput = cameraInput;
         //public void CameraTestTimeline(
         //        String acModel,
@@ -46,23 +58,24 @@ public class CreateMissionActivity extends AppCompatActivity
         if (mMissionOptions.startMission == StartMission.FROM_TAIL){
             isFromTailEnd = true;
         }
-        String mediaType = "BOTH";
+        String mediaType;
         if (mMissionOptions.photo && mMissionOptions.video) mediaType = "BOTH";
         else if (mMissionOptions.photo) mediaType = "PHOTO";
         else if (mMissionOptions.video) mediaType = "VIDEO";
+        else mediaType = "BOTH";
 
-        if (!mMissionOptions.aircraftType.equals("OTHER")) {
-            CameraTestTimeline cameraTestTimeline = new CameraTestTimeline(
-                    mMissionOptions.aircraftType,
-                    isFromTailEnd,
-                    mediaType,
-                    Double.valueOf(mCameraInput.CDist),
-                    Double.valueOf(mCameraInput.COZoom),
-                    Double.valueOf(mCameraInput.CDZoom));
-        }
+        CameraTestTimeline cameraTestTimeline = new CameraTestTimeline(
+                mMissionOptions.aircraftType,
+                isFromTailEnd,
+                mediaType,
+                Double.valueOf(mCameraInput.CDist),
+                Double.valueOf(mCameraInput.COZoom),
+                Double.valueOf(mCameraInput.CDZoom));
         finish();
     }
-
+    @Override
+    public void onOtherEndInputNextSelected(OtherEndInput otherEndInput) {
+    }
     private void loadFragment(Fragment fragment) {
         // create a FragmentManager
         FragmentManager fm = getSupportFragmentManager();

@@ -11,6 +11,8 @@
     <string name="multiple_passes">Multiple passes</string>
     <string name="photo">Photo</string>
     <string name="video">Video</string>
+    <string name="other_end_latitude">Enter other end Latitude(optional)</string>
+    <string name="other_end_longitude">Enter other end Longitude(optional)</string>
     <string-array name="aircraft_array">
         <item>Select Aircraft</item>
         <item>MD10-10</item>
