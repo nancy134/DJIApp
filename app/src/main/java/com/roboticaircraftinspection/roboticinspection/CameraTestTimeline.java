@@ -44,18 +44,13 @@ import dji.sdk.mission.timeline.actions.GimbalAttitudeAction;
 import dji.sdk.mission.timeline.actions.GoHomeAction;
 import dji.sdk.mission.timeline.actions.TakeOffAction;
 import dji.sdk.mission.timeline.triggers.AircraftLandedTrigger;
-import dji.sdk.mission.timeline.triggers.BatteryPowerLevelTrigger;
-import dji.sdk.mission.timeline.triggers.Trigger;
-import dji.sdk.mission.timeline.triggers.TriggerEvent;
 import dji.sdk.mission.timeline.triggers.WaypointReachedTrigger;
 import dji.sdk.products.Aircraft;
 
-public class CameraTestTimeline {
+public class CameraTestTimeline extends Timeline{
     private MissionControl missionControl;
     private FlightController flightController;
     private double droneOrientation;
-    private String timelineInfo;
-    private String runningInfo;
     private Model model;
     private String orientationMode;
     private int satelliteCount;
@@ -75,16 +70,10 @@ public class CameraTestTimeline {
     protected double rtkfLongitude;
     protected double oldHomeLatitude;
     protected double oldHomeLongitude;
-    private TimelineEvent preEvent;
-    private TimelineElement preElement;
-    private DJIError preError;
     private double newDroneOrientation;
     private boolean mFlyFromTailEnd = false;
     private String mAcModel = null;
     protected double mCameraDist;
-    private static final int earthRadiusInMetres = 6371000;
-    protected double newHomeLatitude;
-    protected double newHomeLongitude;
     private final int fuselageRadius= 7; // half the dia. for B757 - Body dia = 13 ft
     private int directionFactor = 1;
     private final int fuselageNbrWayPoints = 4;
@@ -383,84 +372,11 @@ public class CameraTestTimeline {
         missionControl.addListener(listener);
 
     }
-    private void setRunningResultToText(final String s) {
-        runningInfo = runningInfo + s;
-    }
 
-    private void setTimelinePlanToText(final String s) {
-        timelineInfo = timelineInfo + s;
-    }
-    private void updateTimelineStatus(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {
-
-        if (element == preElement && event == preEvent && error == preError) {
-            return;
-        }
-
-        if (element != null) {
-            if (element instanceof TimelineMission) {
-                setRunningResultToText(((TimelineMission) element).getMissionObject().getClass().getSimpleName()
-                        + " event is "
-                        + event.toString()
-                        + " "
-                        + (error == null ? "" : error.getDescription()));
-            } else {
-                setRunningResultToText(element.getClass().getSimpleName()
-                        + " event is "
-                        + event.toString()
-                        + " "
-                        + (error == null ? "" : error.getDescription()));
-            }
-        } else {
-            setRunningResultToText("Timeline Event is " + event.toString() + " " + (error == null
-                    ? ""
-                    : "Failed:"
-                    + error.getDescription()));
-        }
-
-        preEvent = event;
-        preElement = element;
-        preError = error;
-    }
-    private Trigger.Listener triggerListener = new Trigger.Listener() {
-        @Override
-        public void onEvent(Trigger trigger, TriggerEvent event, @Nullable DJIError error) {
-            setRunningResultToText("Trigger " + trigger.getClass().getSimpleName() + " event is " + event.name() + (error == null ? " " : error.getDescription()));
-        }
-    };
-    private void initTrigger(final Trigger trigger) {
-        trigger.addListener(triggerListener);
-        trigger.setAction(new Trigger.Action() {
-            @Override
-            public void onCall() {
-                setRunningResultToText("Trigger " + trigger.getClass().getSimpleName() + " Action method onCall() is invoked");
-            }
-        });
-    }
     private void addWaypointReachedTrigger(Triggerable triggerTarget, int value) {
         WaypointReachedTrigger trigger = new WaypointReachedTrigger();
         trigger.setWaypointIndex(value);
         addTrigger(trigger, triggerTarget, " at index " + value);
-    }
-    private void addTrigger(Trigger trigger, Triggerable triggerTarget, String additionalComment) {
-
-        if (triggerTarget != null) {
-
-            initTrigger(trigger);
-            List<Trigger> triggers = triggerTarget.getTriggers();
-            if (triggers == null) {
-                triggers = new ArrayList<>();
-            }
-
-            triggers.add(trigger);
-            triggerTarget.setTriggers(triggers);
-
-            setTimelinePlanToText(triggerTarget.getClass().getSimpleName()
-                    + " Trigger "
-                    + triggerTarget.getTriggers().size()
-                    + ") "
-                    + trigger.getClass().getSimpleName()
-                    + additionalComment);
-        }
     }
     private WaypointMission initTestingWaypointMissionNoseEnd() {
         if (!GeneralUtils.checkGpsCoordinate(homeLatitude, homeLongitude)) {
@@ -624,30 +540,6 @@ public class CameraTestTimeline {
         waypointMissionBuilder.waypointList(waypoints).waypointCount(waypoints.size());
         return waypointMissionBuilder.build();
     }
-    private void movePoint(double hLat, double hLon, double brng, double distanceInMetres) {
-        double brngRad = Math.toRadians(brng);
-        double latRad = Math.toRadians(hLat);
-        double lonRad = Math.toRadians(hLon);
-        double distFrac = distanceInMetres / earthRadiusInMetres;
-
-        double latitudeResult = Math.asin(Math.sin(latRad) * Math.cos(distFrac) + Math.cos(latRad) * Math.sin(distFrac) * Math.cos(brngRad));
-        double a = Math.atan2(Math.sin(brngRad) * Math.sin(distFrac) * Math.cos(latRad), Math.cos(distFrac) - Math.sin(latRad) * Math.sin(latitudeResult));
-        double longitudeResult = (lonRad + a + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
-
-        newHomeLatitude = Math.toDegrees(latitudeResult);
-        newHomeLongitude = Math.toDegrees(longitudeResult);
-//        System.out.println("latitude: " + Math.toDegrees(latitudeResult) + ", longitude: " + Math.toDegrees(longitudeResult));
-    }
-    private void addAircraftLandedTrigger(Triggerable triggerTarget) {
-        AircraftLandedTrigger trigger = new AircraftLandedTrigger();
-        addTrigger(trigger, triggerTarget, "");
-    }
-    private void addBatteryPowerLevelTrigger(Triggerable triggerTarget) {
-        float value = 20f;
-        BatteryPowerLevelTrigger trigger = new BatteryPowerLevelTrigger();
-        trigger.setPowerPercentageTriggerValue(value);
-        addTrigger(trigger, triggerTarget, " at level " + value);
-    }
     private WaypointMission initTestingWaypointMissionNoseEndOther() {
         if (!GeneralUtils.checkGpsCoordinate(homeLatitude, homeLongitude)) {
             ToastUtils.setResultToToast("No home point!!!");
@@ -692,16 +584,4 @@ public class CameraTestTimeline {
         }
     }
 
-    private void stopTimeline() {
-        MissionControl.getInstance().stopTimeline();
-    }
-
-    private void pauseTimeline() {
-        MissionControl.getInstance().pauseTimeline();
-    }
-
-
-    private void resumeTimeline() {
-        MissionControl.getInstance().resumeTimeline();
-    }
 }

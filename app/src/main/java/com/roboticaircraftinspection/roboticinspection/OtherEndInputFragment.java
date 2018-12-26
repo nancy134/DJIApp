@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.roboticaircraftinspection.roboticinspection.models.CameraInput;
 import com.roboticaircraftinspection.roboticinspection.models.OtherEndInput;
 
 public class OtherEndInputFragment extends Fragment {
