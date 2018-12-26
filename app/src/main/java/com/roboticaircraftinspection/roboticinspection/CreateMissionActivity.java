@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.roboticaircraftinspection.roboticinspection.models.CameraInput;
 import com.roboticaircraftinspection.roboticinspection.models.MissionOptions;
+import com.roboticaircraftinspection.roboticinspection.models.MissionType;
 import com.roboticaircraftinspection.roboticinspection.models.OtherEndInput;
 import com.roboticaircraftinspection.roboticinspection.models.StartMission;
 
@@ -31,8 +32,7 @@ public class CreateMissionActivity extends AppCompatActivity
     }
     public void onOptionsNextSelected(MissionOptions options){
         mMissionOptions = new MissionOptions(options);
-        Log.d("NANCY","missionType: "+mMissionOptions.missionType);
-        if (mMissionOptions.missionType == 2) {
+        if (mMissionOptions.missionType == MissionType.POINTS_OF_INTEREST) {
             OtherEndInputFragment otherEndInputFragment = new OtherEndInputFragment();
             otherEndInputFragment.setOnOtherEndInputNextSelectedListener(this);
             loadFragment(otherEndInputFragment);
@@ -63,6 +63,12 @@ public class CreateMissionActivity extends AppCompatActivity
         else if (mMissionOptions.photo) mediaType = "PHOTO";
         else if (mMissionOptions.video) mediaType = "VIDEO";
         else mediaType = "BOTH";
+        Log.d("NANCY","CDist: "+mCameraInput.CDist);
+        Log.d("NANCY","COZoom: "+mCameraInput.COZoom);
+        Log.d("NANCY","CDZoom: "+mCameraInput.CDZoom);
+        if (mCameraInput.CDist.length() == 0) mCameraInput.CDist = "0";
+        if (mCameraInput.COZoom.length() == 0) mCameraInput.COZoom = "0";
+        if (mCameraInput.CDZoom.length() == 0) mCameraInput.CDZoom = "0";
 
         CameraTestTimeline cameraTestTimeline = new CameraTestTimeline(
                 mMissionOptions.aircraftType,

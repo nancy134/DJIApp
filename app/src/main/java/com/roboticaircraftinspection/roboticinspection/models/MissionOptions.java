@@ -6,7 +6,7 @@ public class MissionOptions {
     public Boolean multiplePasses;
     public StartMission startMission;
     public String aircraftType;
-    public long missionType;
+    public MissionType missionType;
 
     public MissionOptions (){
         photo = true;
@@ -15,7 +15,7 @@ public class MissionOptions {
         multiplePasses = false;
         startMission = StartMission.FROM_NOSE;
         aircraftType = AcModels.ACMODELS[0];
-        missionType = 0;
+        missionType = MissionType.SELECT_MISSION_TYPE;
     }
     public MissionOptions(MissionOptions options){
         photo = options.photo;

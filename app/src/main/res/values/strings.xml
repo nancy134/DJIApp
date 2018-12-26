@@ -3,8 +3,8 @@
     <string name="from_nose">From Nose</string>
     <string name="from_tail">From Tail</string>
     <string name="next">Next</string>
-    <string name="CDist">Enter Optical Zoom Focal length</string>
-    <string name="COZoom">Enter distance between Camera and A/C</string>
+    <string name="CDist">Enter distance between Camera and A/C</string>
+    <string name="COZoom">Enter Focal length</string>
     <string name="CDZoom">Enter Digital Zoom (Range: 1-2)</string>
     <string name="initialize_timeline">Initialize Timeline</string>
     <string name="geofence">Geofence</string>
@@ -13,26 +13,12 @@
     <string name="video">Video</string>
     <string name="other_end_latitude">Enter other end Latitude(optional)</string>
     <string name="other_end_longitude">Enter other end Longitude(optional)</string>
-    <string-array name="aircraft_array">
-        <item>Select Aircraft</item>
-        <item>MD10-10</item>
-        <item>MD10-30</item>
-        <item>MD11</item>
-        <item>B757-200</item>
-        <item>B767-200</item>
-        <item>B777</item>
-        <item>A300-600</item>
-        <item>A310-300</item>
-        <item>OTHER</item>
-    </string-array>
-    <string-array name="mission_type_array">
-        <item>Select Mission Type</item>
-        <item>Complete</item>
-        <item>Points of Interest</item>
-        <item>Camera Test</item>
-        <item>Nose</item>
-        <item>Tail</item>
-        <item>Left Wing</item>
-        <item>Right Wing</item>
-    </string-array>
+    <string name="select_mission_type">Select Mission Type</string>
+    <string name="complete">Complete</string>
+    <string name="points_of_interest">Points of Interest</string>
+    <string name="camera_test">Camera Test</string>
+    <string name="nose">Nose</string>
+    <string name="tail">Tail</string>
+    <string name="left_wing">Left Wing</string>
+    <string name="right_wing">Right Wing</string>
 </resources>

@@ -14,8 +14,10 @@ import android.widget.Spinner;
 
 import com.roboticaircraftinspection.roboticinspection.models.AcModels;
 import com.roboticaircraftinspection.roboticinspection.models.MissionOptions;
+import com.roboticaircraftinspection.roboticinspection.models.MissionType;
 import com.roboticaircraftinspection.roboticinspection.models.StartMission;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +31,19 @@ public class MissionOptionsFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_mission_options, container, false);
 
+        Spinner missionTypeSpinner = view.findViewById(R.id.spinner_mission_type);
+        List<String> missionTypeList = new ArrayList<String>();
+        for ( final MissionType missionType : MissionType.values() )
+        {
+            missionTypeList.add( getString( missionType.id() ) );
+        }
+        ArrayAdapter<String> missionListAdapter = new ArrayAdapter<String>(
+                view.getContext(),
+                R.layout.support_simple_spinner_dropdown_item,
+                missionTypeList
+        );
+        missionTypeSpinner.setAdapter(missionListAdapter);
+        missionListAdapter.notifyDataSetChanged();
 
         Spinner aircraftType = view.findViewById(R.id.spinner_aircraft_type);
         List<String> aircraftList = Arrays.asList(AcModels.ACMODELS);
@@ -60,8 +75,11 @@ public class MissionOptionsFragment extends Fragment {
 
                 Spinner aircraftType = getView().findViewById(R.id.spinner_aircraft_type);
                 missionOptions.aircraftType = aircraftType.getSelectedItem().toString();
+
                 Spinner missionType = getView().findViewById(R.id.spinner_mission_type);
-                missionOptions.missionType = missionType.getSelectedItemId();
+                for (MissionType m: MissionType.values()){
+                    if (m.id() == missionType.getSelectedItemId()) missionOptions.missionType = m;
+                }
                 mCallback.onOptionsNextSelected(missionOptions);
 
             }
