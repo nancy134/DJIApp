@@ -63,9 +63,6 @@ public class CreateMissionActivity extends AppCompatActivity
         else if (mMissionOptions.photo) mediaType = "PHOTO";
         else if (mMissionOptions.video) mediaType = "VIDEO";
         else mediaType = "BOTH";
-        Log.d("NANCY","CDist: "+mCameraInput.CDist);
-        Log.d("NANCY","COZoom: "+mCameraInput.COZoom);
-        Log.d("NANCY","CDZoom: "+mCameraInput.CDZoom);
         if (mCameraInput.CDist.length() == 0) mCameraInput.CDist = "0";
         if (mCameraInput.COZoom.length() == 0) mCameraInput.COZoom = "0";
         if (mCameraInput.CDZoom.length() == 0) mCameraInput.CDZoom = "0";

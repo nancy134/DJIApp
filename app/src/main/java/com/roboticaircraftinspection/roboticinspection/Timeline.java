@@ -15,6 +15,7 @@ import dji.sdk.mission.timeline.triggers.AircraftLandedTrigger;
 import dji.sdk.mission.timeline.triggers.BatteryPowerLevelTrigger;
 import dji.sdk.mission.timeline.triggers.Trigger;
 import dji.sdk.mission.timeline.triggers.TriggerEvent;
+import dji.sdk.mission.timeline.triggers.WaypointReachedTrigger;
 
 public class Timeline {
     private String timelineInfo;
@@ -86,6 +87,11 @@ public class Timeline {
     protected void addAircraftLandedTrigger(Triggerable triggerTarget) {
         AircraftLandedTrigger trigger = new AircraftLandedTrigger();
         addTrigger(trigger, triggerTarget, "");
+    }
+    protected void addWaypointReachedTrigger(Triggerable triggerTarget, int value) {
+        WaypointReachedTrigger trigger = new WaypointReachedTrigger();
+        trigger.setWaypointIndex(value);
+        addTrigger(trigger, triggerTarget, " at index " + value);
     }
     protected void setRunningResultToText(final String s) {
         runningInfo = runningInfo + s;
