@@ -16,12 +16,16 @@ import java.util.List;
 import dji.common.error.DJIError;
 import dji.common.flightcontroller.FlightControllerState;
 import dji.common.flightcontroller.FlightMode;
+import dji.common.flightcontroller.RTKState;
 import dji.common.gimbal.Attitude;
 import dji.common.gimbal.Rotation;
 import dji.common.mission.waypoint.Waypoint;
 import dji.common.mission.waypoint.WaypointAction;
 import dji.common.mission.waypoint.WaypointActionType;
 import dji.common.mission.waypoint.WaypointMission;
+import dji.common.model.LocationCoordinate2D;
+import dji.common.product.Model;
+import dji.common.util.CommonCallbacks;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.mission.MissionControl;
 import dji.sdk.mission.timeline.TimelineElement;
@@ -30,6 +34,7 @@ import dji.sdk.mission.timeline.TimelineMission;
 import dji.sdk.mission.timeline.actions.GimbalAttitudeAction;
 import dji.sdk.mission.timeline.actions.GoHomeAction;
 import dji.sdk.mission.timeline.actions.TakeOffAction;
+import dji.sdk.products.Aircraft;
 
 public class SinglePassTimeline extends Timeline {
     private String mAcModel = null;
@@ -70,6 +75,16 @@ public class SinglePassTimeline extends Timeline {
     ArrayList<Double> latArray = new ArrayList<Double>();
     ArrayList<Double> longArray = new ArrayList<Double>();
     private FlightController flightController;
+    protected double m210Latitude  = 0;
+    protected double m210Longitude = 0;
+    private Model model;
+    protected double rtkbLatitude;
+    protected double rtkbLongitude;
+    protected double rtkmLatitude;
+    protected double rtkmLongitude;
+    protected double rtkfLatitude;
+    protected double rtkfLongitude;
+    private int maxFlightRadius;
 
     public SinglePassTimeline(
             String acModel,
@@ -187,6 +202,76 @@ public class SinglePassTimeline extends Timeline {
 
         missionControl.scheduleElements(elements);
         missionControl.addListener(listener);
+    }
+    private void getHomepoint(){
+        if (InspectionApplication.getProductInstance() instanceof Aircraft && !GeneralUtils.checkGpsCoordinate(
+                homeLatitude,
+                homeLongitude) && flightController != null) {
+            m210Latitude = 0;
+            m210Longitude = 0;
+            if (model != null && ((model == Model.MATRICE_210 || model == Model.MATRICE_210_RTK))) {
+                if (flightController.getRTK().isConnected()) {
+                    setTimelinePlanToText("Model :" + model + " ** RTK CONNECTED **");
+                    flightController.getRTK().setStateCallback(new RTKState.Callback() {
+                        @Override
+                        public void onUpdate(@NonNull RTKState rtkState) {
+                            rtkbLatitude = rtkState.getBaseStationLocation().getLatitude(); // RTK location
+                            rtkbLongitude = rtkState.getBaseStationLocation().getLongitude();
+                            rtkfLatitude = rtkState.getFusionMobileStationLocation().getLatitude(); // Combination of Drone and RTK used by Flight Controller
+                            rtkfLongitude = rtkState.getFusionMobileStationLocation().getLongitude();
+                            rtkmLatitude = rtkState.getMobileStationLocation().getLatitude(); // Drone location, Receiver#1 Antenna
+                            rtkmLongitude = rtkState.getMobileStationLocation().getLongitude();
+
+                            // This thread continuously return back telemetry info. we dont want to set the home position all the time.
+                            // To be set only once
+                            if (m210Latitude == 0 && m210Longitude == 0) {
+                                m210Latitude = rtkfLatitude;
+                                m210Longitude = rtkfLongitude;
+                                homeLatitude = m210Longitude;
+                                homeLongitude = m210Longitude;
+                                //
+                                // The following code would help the drone return back to the new rtk home location
+                                //
+                                flightController.setHomeLocation(new LocationCoordinate2D(m210Latitude, m210Longitude), new CommonCallbacks.CompletionCallback() {
+                                    @Override
+                                    public void onResult(DJIError djiError) {
+                                        ToastUtils.setResultToToast("setHome using RTK: " + (djiError == null
+                                                ? " - Success"
+                                                : " - Failed " + djiError.getDescription()));
+                                        return;
+                                    }
+                                });
+                            }
+
+                            setTimelinePlanToText("RTKF lat/lon.: " + rtkfLatitude + " " + rtkfLongitude +
+                                    "\n RTKB lat/lon.: " + rtkbLatitude + " " + rtkbLongitude +
+                                    "\n RTKM lat/lon.: " + rtkmLatitude + " " + rtkmLongitude + "\n");
+                            setTimelinePlanToText("New HP lat/lon: " + homeLatitude + homeLongitude + "\n");
+                        }
+                    });
+                } else {
+                    ToastUtils.setResultToToast("RTK is NOT connected");
+                    return;
+                }
+            } else {
+                flightController.getHomeLocation(new CommonCallbacks.CompletionCallbackWith<LocationCoordinate2D>() {
+                    @Override
+                    public void onSuccess(LocationCoordinate2D locationCoordinate2D) {
+                        homeLatitude = locationCoordinate2D.getLatitude();
+                        homeLongitude = locationCoordinate2D.getLongitude();
+                    }
+
+                    @Override
+                    public void onFailure(DJIError djiError) {
+                        ToastUtils.setResultToToast("Failed to get home coordinates: " + djiError.getDescription());
+                        return;
+                    }
+                });
+            }
+            setTimelinePlanToText("HP lat./Long.: " + homeLatitude + "\n" + homeLongitude +
+                    "\n#satellites: " + satelliteCount + " Signal strength: " + gpsSignalLevel + "\nRadius: " + maxFlightRadius);
+
+        }
     }
     private WaypointMission initTestingWaypointMissionNoseEnd() {
         if (!GeneralUtils.checkGpsCoordinate(homeLatitude, homeLongitude)) {
