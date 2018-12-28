@@ -2,6 +2,7 @@ package com.roboticaircraftinspection.roboticinspection;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.roboticaircraftinspection.roboticinspection.models.AcModels;
 import com.roboticaircraftinspection.roboticinspection.utils.GeneralUtils;
@@ -244,13 +245,6 @@ public class ZonesTimeline extends Timeline{
         return waypointMissionBuilder.build();
 
     }
-    private void addWaypointReachedTrigger(Triggerable triggerTarget, int value) {
-        WaypointReachedTrigger trigger = new WaypointReachedTrigger();
-        trigger.setWaypointIndex(value);
-        addTrigger(trigger, triggerTarget, " at index " + value);
-    }
-
-
     private void setDroneOrientationUsingAzimuth() {
         //Note :
         //DJI Compass.getHeading() :
@@ -330,6 +324,8 @@ public class ZonesTimeline extends Timeline{
             setTimelinePlanToText("HP lat./Long.: " + homeLatitude + "\n" + homeLongitude +
                     "\n#satellites: " + satelliteCount + " Signal strength: " + gpsSignalLevel + "\nRadius: " + maxFlightRadius);
 
+        } else {
+            Log.d("NANCY","Not connected to aircraft");
         }
     }
 }

@@ -8,6 +8,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.roboticaircraftinspection.roboticinspection.InspectionApplication;
+import com.roboticaircraftinspection.roboticinspection.MApplication;
+
 @SuppressWarnings("unchecked")
 /**
  * Created by DJI on 2/28/17.
@@ -36,7 +38,7 @@ public class ToastUtils {
     private static void showMessage(Pair<TextView, String> msg) {
         if (msg != null) {
             if (msg.first == null) {
-                Toast.makeText(InspectionApplication.getContext(), "tv is null", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MApplication.getContext(), "tv is null", Toast.LENGTH_SHORT).show();
             } else {
                 msg.first.setText(msg.second);
             }
@@ -44,7 +46,7 @@ public class ToastUtils {
     }
 
     public static void showToast(String msg) {
-        Toast.makeText(InspectionApplication.getContext(), msg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(MApplication.getContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     public static void setResultToToast(final String string) {

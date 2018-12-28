@@ -46,5 +46,5 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="10dp"
-        android:text="@string/initialize_timeline"/>
+        android:text="@string/next"/>
 </RelativeLayout>

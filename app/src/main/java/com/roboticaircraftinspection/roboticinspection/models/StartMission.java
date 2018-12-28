@@ -1,6 +1,6 @@
 package com.roboticaircraftinspection.roboticinspection.models;
 
-import com.roboticaircraftinspection.roboticinspection.InspectionApplication;
+import com.roboticaircraftinspection.roboticinspection.MApplication;
 import com.roboticaircraftinspection.roboticinspection.R;
 
 public enum StartMission {
@@ -13,7 +13,7 @@ public enum StartMission {
     }
     @Override
     public String toString(){
-        return InspectionApplication.getContext().getString(mResourceId);
+        return MApplication.getContext().getString(mResourceId);
     }
     public int id(){return mResourceId;}
 

@@ -264,7 +264,6 @@ public class SinglePassTimeline extends Timeline {
                     @Override
                     public void onFailure(DJIError djiError) {
                         ToastUtils.setResultToToast("Failed to get home coordinates: " + djiError.getDescription());
-                        return;
                     }
                 });
             }

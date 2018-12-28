@@ -32,7 +32,9 @@ public class CreateMissionActivity extends AppCompatActivity
     }
     public void onOptionsNextSelected(MissionOptions options){
         mMissionOptions = new MissionOptions(options);
-        if (mMissionOptions.missionType == MissionType.POINTS_OF_INTEREST) {
+        Log.d("NANCY","MissionType.POINTS_OF_INTEREST: "+MissionType.POINTS_OF_INTEREST.id());
+        Log.d("NANCY","missionType: "+mMissionOptions.missionType.id());
+        if (mMissionOptions.missionType.id() == MissionType.POINTS_OF_INTEREST.id()) {
             OtherEndInputFragment otherEndInputFragment = new OtherEndInputFragment();
             otherEndInputFragment.setOnOtherEndInputNextSelectedListener(this);
             loadFragment(otherEndInputFragment);
@@ -78,7 +80,39 @@ public class CreateMissionActivity extends AppCompatActivity
     }
     @Override
     public void onOtherEndInputNextSelected(OtherEndInput otherEndInput) {
+        boolean isGeoFenceEnabled = mMissionOptions.geofence;
+        String mediaType = "BOTH";
+        if (mMissionOptions.photo && mMissionOptions.video) mediaType = "BOTH";
+        else if (mMissionOptions.photo) mediaType = "PHOTO";
+        else if (mMissionOptions.video) mediaType = "VIDEO";
+        double endLat;
+        double endLong;
+        if (otherEndInput.otherEndLongitude.length() == 0){
+            endLat = 0;
+        } else {
+            endLat = Double.valueOf(otherEndInput.otherEndLatitude);
+        }
+        if (otherEndInput.otherEndLongitude.length() == 0){
+            endLong = 0;
+        } else {
+            endLong = Double.valueOf(otherEndInput.otherEndLongitude);
+        }
+        boolean isFromTailEnd = false;
+        if (mMissionOptions.startMission == StartMission.FROM_TAIL){
+            isFromTailEnd = true;
+        }
+        endLat = 42.390370;
+        endLong = -71.300740;
+        ZonesTimeline zonesTimeline = new ZonesTimeline(
+                mMissionOptions.aircraftType,
+                isFromTailEnd,
+                mediaType,
+                endLat,
+                endLong,
+                isGeoFenceEnabled);
+        zonesTimeline.getHomepoint();
     }
+
     private void loadFragment(Fragment fragment) {
         // create a FragmentManager
         FragmentManager fm = getSupportFragmentManager();

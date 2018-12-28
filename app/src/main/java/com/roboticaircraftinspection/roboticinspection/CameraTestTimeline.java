@@ -373,11 +373,6 @@ public class CameraTestTimeline extends Timeline{
 
     }
 
-    private void addWaypointReachedTrigger(Triggerable triggerTarget, int value) {
-        WaypointReachedTrigger trigger = new WaypointReachedTrigger();
-        trigger.setWaypointIndex(value);
-        addTrigger(trigger, triggerTarget, " at index " + value);
-    }
     private WaypointMission initTestingWaypointMissionNoseEnd() {
         if (!GeneralUtils.checkGpsCoordinate(homeLatitude, homeLongitude)) {
             ToastUtils.setResultToToast("No home point!!!");

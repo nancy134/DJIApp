@@ -3,6 +3,7 @@ package com.roboticaircraftinspection.roboticinspection;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,15 +33,15 @@ public class MissionOptionsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_mission_options, container, false);
 
         Spinner missionTypeSpinner = view.findViewById(R.id.spinner_mission_type);
-        List<String> missionTypeList = new ArrayList<String>();
-        for ( final MissionType missionType : MissionType.values() )
-        {
-            missionTypeList.add( getString( missionType.id() ) );
-        }
-        ArrayAdapter<String> missionListAdapter = new ArrayAdapter<String>(
+        //List<String> missionTypeList = new ArrayList<String>();
+        //for ( final MissionType missionType : MissionType.values() )
+        //{
+        //    missionTypeList.add( getString( missionType.id() ) );
+        //}
+        final ArrayAdapter<MissionType> missionListAdapter = new ArrayAdapter<MissionType>(
                 view.getContext(),
                 R.layout.support_simple_spinner_dropdown_item,
-                missionTypeList
+                MissionType.values()
         );
         missionTypeSpinner.setAdapter(missionListAdapter);
         missionListAdapter.notifyDataSetChanged();
@@ -77,8 +78,13 @@ public class MissionOptionsFragment extends Fragment {
                 missionOptions.aircraftType = aircraftType.getSelectedItem().toString();
 
                 Spinner missionType = getView().findViewById(R.id.spinner_mission_type);
+                Log.d("NANCY","selectedItem: "+missionType.getSelectedItem());
+                Log.d("NANCY","selectedItemId: "+missionType.getSelectedItemId());
                 for (MissionType m: MissionType.values()){
-                    if (m.id() == missionType.getSelectedItemId()) missionOptions.missionType = m;
+                    if (m.position() == missionType.getSelectedItemId()){
+                        Log.d("NANCY","Set mission type: "+m.id());
+                        missionOptions.missionType = m;
+                    }
                 }
                 mCallback.onOptionsNextSelected(missionOptions);
 

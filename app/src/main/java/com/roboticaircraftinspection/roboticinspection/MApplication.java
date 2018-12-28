@@ -17,10 +17,15 @@ public class MApplication extends Application {
             inspectionApplication.setContext(this);
         }
     }
+    private static Context mContext;
+    public static Context getContext(){
+        return mContext;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mContext = this;
         inspectionApplication.onCreate();
     }
 }
