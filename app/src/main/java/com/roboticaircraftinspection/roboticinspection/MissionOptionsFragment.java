@@ -78,11 +78,8 @@ public class MissionOptionsFragment extends Fragment {
                 missionOptions.aircraftType = aircraftType.getSelectedItem().toString();
 
                 Spinner missionType = getView().findViewById(R.id.spinner_mission_type);
-                Log.d("NANCY","selectedItem: "+missionType.getSelectedItem());
-                Log.d("NANCY","selectedItemId: "+missionType.getSelectedItemId());
                 for (MissionType m: MissionType.values()){
                     if (m.position() == missionType.getSelectedItemId()){
-                        Log.d("NANCY","Set mission type: "+m.id());
                         missionOptions.missionType = m;
                     }
                 }

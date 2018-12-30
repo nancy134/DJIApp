@@ -1,10 +1,13 @@
 package com.roboticaircraftinspection.roboticinspection;
 
+import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.roboticaircraftinspection.roboticinspection.models.AcModels;
+import com.roboticaircraftinspection.roboticinspection.models.InitializeZones;
 import com.roboticaircraftinspection.roboticinspection.utils.GeneralUtils;
 import com.roboticaircraftinspection.roboticinspection.utils.GeoFenceUtil;
 import com.roboticaircraftinspection.roboticinspection.utils.GeoLocation;
@@ -17,6 +20,7 @@ import java.util.List;
 import dji.common.error.DJIError;
 import dji.common.flightcontroller.FlightControllerState;
 import dji.common.flightcontroller.FlightMode;
+import dji.common.flightcontroller.FlightOrientationMode;
 import dji.common.flightcontroller.RTKState;
 import dji.common.gimbal.Attitude;
 import dji.common.gimbal.Rotation;
@@ -27,20 +31,20 @@ import dji.common.mission.waypoint.WaypointMission;
 import dji.common.model.LocationCoordinate2D;
 import dji.common.product.Model;
 import dji.common.util.CommonCallbacks;
+import dji.sdk.base.BaseProduct;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.mission.MissionControl;
-import dji.sdk.mission.Triggerable;
 import dji.sdk.mission.timeline.TimelineElement;
 import dji.sdk.mission.timeline.TimelineEvent;
 import dji.sdk.mission.timeline.TimelineMission;
 import dji.sdk.mission.timeline.actions.GimbalAttitudeAction;
 import dji.sdk.mission.timeline.actions.GoHomeAction;
 import dji.sdk.mission.timeline.actions.TakeOffAction;
-import dji.sdk.mission.timeline.triggers.WaypointReachedTrigger;
 import dji.sdk.products.Aircraft;
 
 public class ZonesTimeline extends Timeline{
 
+    public int HOME_HEIGHT = 30;
     private String mAcModel = null;
     private boolean mFlyFromTailEnd = false;
     private String mMediaType = null;
@@ -72,6 +76,11 @@ public class ZonesTimeline extends Timeline{
     protected double rtkfLatitude;
     protected double rtkfLongitude;
     private int maxFlightRadius;
+    private String orientationMode;
+    private String serialNumber;
+    private InitializeZones mInitializeZones;
+
+    ZonesTimeline.OnInitializeListener mCallback;
 
     public ZonesTimeline(
             String acModel,
@@ -87,8 +96,17 @@ public class ZonesTimeline extends Timeline{
         endHomeLatitude = endLat;
         endHomeLongitude = endLong;
         mIsGeoFenceEnabled = isGeoFenceEnabled;
-
+        mInitializeZones = new InitializeZones();
     }
+
+    public void setOnInitializeListener(Fragment fragment){
+        Log.d("NANCY","setOnInitializeListener");
+        mCallback = (ZonesTimeline.OnInitializeListener)fragment;
+    }
+    public interface OnInitializeListener {
+        void onInitialize(InitializeZones initializeZones);
+    }
+
     private void initTimeline() {
         if (!GeneralUtils.checkGpsCoordinate(homeLatitude, homeLongitude)) {
             ToastUtils.setResultToToast("No home point!!!");
@@ -254,6 +272,111 @@ public class ZonesTimeline extends Timeline{
         droneOrientation = azimuth;
         newDroneOrientation = droneOrientation + 90;
         setTimelinePlanToText("azimuth=" + azimuth);
+
+    }
+    public void initialize(){
+        BaseProduct product = InspectionApplication.getProductInstance();
+
+        missionControl = MissionControl.getInstance();
+        if (product instanceof Aircraft) {
+            mInitializeZones.aircraftFound = true;
+
+            flightController = ((Aircraft) product).getFlightController();
+
+            droneOrientation = (double) flightController.getCompass().getHeading();
+            mInitializeZones.droneOrientation = droneOrientation;
+
+            setTimelinePlanToText("compass angle (init)= " + droneOrientation);
+
+            model = product.getModel();
+            mInitializeZones.model = model;
+            mCallback.onInitialize(mInitializeZones);
+
+            flightController.setGoHomeHeightInMeters(HOME_HEIGHT, new CommonCallbacks.CompletionCallback() {
+                @Override
+                public void onResult(DJIError djiError) {
+                    if (djiError == null){
+                        mInitializeZones.homeHeight = HOME_HEIGHT;
+                        mCallback.onInitialize(mInitializeZones);
+                    }
+                    ToastUtils.setResultToToast("Result: " + (djiError == null
+                            ? "Success"
+                            : djiError.getDescription()));
+                }
+            });
+
+            flightController.setFlightOrientationMode(FlightOrientationMode.COURSE_LOCK,
+                    new CommonCallbacks.CompletionCallback() {
+                        @Override
+                        public void onResult(DJIError djiError) {
+                            ToastUtils.setResultToToast("Result: " + (djiError == null
+                                    ? "Course Lock requested"
+                                    : djiError.getDescription()));
+                        }
+                    });
+
+            flightController.lockCourseUsingCurrentHeading(new CommonCallbacks.CompletionCallback(){
+                @Override
+                public void onResult(DJIError djiError) {
+                    if (djiError == null){
+                        mInitializeZones.lockCourseUsingCurrentHeading = true;
+                        mCallback.onInitialize(mInitializeZones);
+                    }
+                    ToastUtils.setResultToToast("Result: " + (djiError == null
+                            ? "Course Locked"
+                            : djiError.getDescription()));
+                }
+            });
+
+            flightController.setStateCallback(new FlightControllerState.Callback() {
+                @Override
+                public void onUpdate(@NonNull FlightControllerState flightControllerState) {
+
+                    orientationMode = flightControllerState.getOrientationMode().name();
+                    mInitializeZones.flightOrientationMode = orientationMode;
+                    satelliteCount = flightControllerState.getSatelliteCount();
+                    mInitializeZones.satelliteCount = satelliteCount;
+                    flightControllerState.setFlightMode(FlightMode.GPS_HOME_LOCK);
+                    mInitializeZones.flightMode = FlightMode.GPS_HOME_LOCK.name();
+                    gpsSignalLevel = flightControllerState.getGPSSignalLevel().value();
+                    mInitializeZones.gpsSignalLevel = gpsSignalLevel;
+                    mCallback.onInitialize(mInitializeZones);
+                }
+            });
+
+            flightController.getMaxFlightRadius(new CommonCallbacks.CompletionCallbackWith<Integer>() {
+                @Override
+                public void onSuccess(Integer s) {
+                    maxFlightRadius = s;
+                    mInitializeZones.maxFlightRadius = maxFlightRadius;
+                    mCallback.onInitialize(mInitializeZones);
+                }
+
+                @Override
+                public void onFailure(DJIError djiError) {
+                    ToastUtils.setResultToToast("getMaxFlightRadius failed: " + djiError.getDescription());
+                }
+            });
+
+            flightController.getSerialNumber(new CommonCallbacks.CompletionCallbackWith<String>() {
+                @Override
+                public void onSuccess(String s) {
+                    serialNumber = s;
+                    mInitializeZones.serialNumber = serialNumber;
+                    mCallback.onInitialize(mInitializeZones);
+                }
+
+                @Override
+                public void onFailure(DJIError djiError) {
+                    ToastUtils.setResultToToast("getSerialNumber failed: " + djiError.getDescription());
+                }
+            });
+
+        } else {
+            mInitializeZones.aircraftFound = false;
+            mCallback.onInitialize(mInitializeZones);
+            ToastUtils.setResultToToast("Aircraft not found");
+        }
 
     }
     public void getHomepoint(){

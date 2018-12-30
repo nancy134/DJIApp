@@ -5,7 +5,7 @@
     <string name="next">Next</string>
     <string name="CDist">Enter distance between Camera and A/C</string>
     <string name="COZoom">Enter Focal length</string>
-    <string name="CDZoom">Enter Digital Zoom (Range: 1-2)</string>
+    <string name="CDZoom">Enter Digital Zoom (Range: 1&#8122;2)</string>
     <string name="initialize_timeline">Initialize Timeline</string>
     <string name="geofence">Geofence</string>
     <string name="multiple_passes">Multiple passes</string>
@@ -21,4 +21,16 @@
     <string name="tail">Tail</string>
     <string name="left_wing">Left Wing</string>
     <string name="right_wing">Right Wing</string>
+    <string name="aircraft_found">Aircraft found</string>
+    <string name="drone_orientation_label">Drone orientation: </string>
+    <string name="model_label">Model: </string>
+    <string name="home_height_label">Home height: </string>
+    <string name="flight_orientation_mode_label">Flight orientation mode: </string>
+    <string name="local_course">Lock course using current heading</string>
+    <string name="satellite_count_label">Satellite count: </string>
+    <string name="flight_mode_label">Flight mode: </string>
+    <string name="gps_signal_level_label">GPS signal level: </string>
+    <string name="max_flight_radius_label">Max flight radius: </string>
+    <string name="serial_number_label">Serial number: </string>
+
 </resources>

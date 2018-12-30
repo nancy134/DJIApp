@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.roboticaircraftinspection.roboticinspection.models.CameraInput;
 import com.roboticaircraftinspection.roboticinspection.models.MissionOptions;
@@ -16,7 +15,8 @@ import com.roboticaircraftinspection.roboticinspection.models.StartMission;
 public class CreateMissionActivity extends AppCompatActivity
     implements MissionOptionsFragment.OnOptionsNextSelectedListener,
         CameraInputFragment.OnCameraInputNextSelectedListener,
-        OtherEndInputFragment.OnOtherEndInputNextSelectedListener
+        OtherEndInputFragment.OnOtherEndInputNextSelectedListener,
+        InitializeZonesFragment.OnInitializeNextSelectedListener
 {
 
     MissionOptions mMissionOptions;
@@ -32,8 +32,6 @@ public class CreateMissionActivity extends AppCompatActivity
     }
     public void onOptionsNextSelected(MissionOptions options){
         mMissionOptions = new MissionOptions(options);
-        Log.d("NANCY","MissionType.POINTS_OF_INTEREST: "+MissionType.POINTS_OF_INTEREST.id());
-        Log.d("NANCY","missionType: "+mMissionOptions.missionType.id());
         if (mMissionOptions.missionType.id() == MissionType.POINTS_OF_INTEREST.id()) {
             OtherEndInputFragment otherEndInputFragment = new OtherEndInputFragment();
             otherEndInputFragment.setOnOtherEndInputNextSelectedListener(this);
@@ -49,13 +47,6 @@ public class CreateMissionActivity extends AppCompatActivity
     @Override
     public void onCameraInputNextSelected(CameraInput cameraInput) {
         mCameraInput = cameraInput;
-        //public void CameraTestTimeline(
-        //        String acModel,
-        //boolean isFromTailEnd,
-        //String mediaType,
-        //double cDist,
-        //double cOZoom ,
-        //double cDZoom)
         boolean isFromTailEnd = false;
         if (mMissionOptions.startMission == StartMission.FROM_TAIL){
             isFromTailEnd = true;
@@ -110,9 +101,15 @@ public class CreateMissionActivity extends AppCompatActivity
                 endLat,
                 endLong,
                 isGeoFenceEnabled);
-        zonesTimeline.getHomepoint();
-    }
+        InitializeZonesFragment initializeFragment = new InitializeZonesFragment();
+        initializeFragment.setTimeline(zonesTimeline);
+        initializeFragment.setOnInitializeNextSelectedListener(this);
 
+        loadFragment(initializeFragment);
+    }
+    @Override
+    public void onInitializeNextSelected() {
+    }
     private void loadFragment(Fragment fragment) {
         // create a FragmentManager
         FragmentManager fm = getSupportFragmentManager();

@@ -38,11 +38,8 @@ public enum MissionType {
     @Override
     public String toString(){
         Context context = MApplication.getContext();
-        Log.d("NANCY","context: "+context);
         Resources resources = context.getResources();
-        Log.d("NANCY","resources: "+resources);
         String str = resources.getString(mResourceId);
-        Log.d("NANCY","str: "+str);
         return str;
     }
     public int id(){return mResourceId;}
