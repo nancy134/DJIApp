@@ -32,5 +32,7 @@
     <string name="gps_signal_level_label">GPS signal level: </string>
     <string name="max_flight_radius_label">Max flight radius: </string>
     <string name="serial_number_label">Serial number: </string>
+    <string name="homepoint_latitude_label">Homepoint latitude:</string>
+    <string name="homepoint_longitude_label">Homepoint longitude:</string>
 
 </resources>

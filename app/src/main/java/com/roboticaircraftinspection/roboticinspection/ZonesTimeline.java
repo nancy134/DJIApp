@@ -1,12 +1,12 @@
 package com.roboticaircraftinspection.roboticinspection;
 
-import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import com.roboticaircraftinspection.roboticinspection.models.AcModels;
+import com.roboticaircraftinspection.roboticinspection.models.HomePoint;
 import com.roboticaircraftinspection.roboticinspection.models.InitializeZones;
 import com.roboticaircraftinspection.roboticinspection.utils.GeneralUtils;
 import com.roboticaircraftinspection.roboticinspection.utils.GeoFenceUtil;
@@ -78,9 +78,11 @@ public class ZonesTimeline extends Timeline{
     private int maxFlightRadius;
     private String orientationMode;
     private String serialNumber;
-    private InitializeZones mInitializeZones;
 
+    private InitializeZones mInitializeZones;
+    private HomePoint mHomePoint;
     ZonesTimeline.OnInitializeListener mCallback;
+    ZonesTimeline.OnHomePointListener mCallbackHomePoint;
 
     public ZonesTimeline(
             String acModel,
@@ -97,6 +99,7 @@ public class ZonesTimeline extends Timeline{
         endHomeLongitude = endLong;
         mIsGeoFenceEnabled = isGeoFenceEnabled;
         mInitializeZones = new InitializeZones();
+        mHomePoint = new HomePoint();
     }
 
     public void setOnInitializeListener(Fragment fragment){
@@ -105,6 +108,12 @@ public class ZonesTimeline extends Timeline{
     }
     public interface OnInitializeListener {
         void onInitialize(InitializeZones initializeZones);
+    }
+    public void setOnHomePointListener(Fragment fragment){
+        mCallbackHomePoint = (ZonesTimeline.OnHomePointListener)fragment;
+    }
+    public interface OnHomePointListener {
+        void onHomePoint(HomePoint homePoint);
     }
 
     private void initTimeline() {
@@ -405,6 +414,9 @@ public class ZonesTimeline extends Timeline{
                                 m210Longitude = rtkfLongitude;
                                 homeLatitude = m210Longitude;
                                 homeLongitude = m210Longitude;
+                                mHomePoint.latitude = homeLatitude;
+                                mHomePoint.longitude = homeLongitude;
+                                mCallbackHomePoint.onHomePoint(mHomePoint);
                                 //
                                 // The following code would help the drone return back to the new rtk home location
                                 //
@@ -435,6 +447,9 @@ public class ZonesTimeline extends Timeline{
                     public void onSuccess(LocationCoordinate2D locationCoordinate2D) {
                         homeLatitude = locationCoordinate2D.getLatitude();
                         homeLongitude = locationCoordinate2D.getLongitude();
+                        mHomePoint.latitude = homeLatitude;
+                        mHomePoint.longitude = homeLongitude;
+                        mCallbackHomePoint.onHomePoint(mHomePoint);
                     }
 
                     @Override

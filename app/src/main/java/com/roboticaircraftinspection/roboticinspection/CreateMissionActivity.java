@@ -16,11 +16,13 @@ public class CreateMissionActivity extends AppCompatActivity
     implements MissionOptionsFragment.OnOptionsNextSelectedListener,
         CameraInputFragment.OnCameraInputNextSelectedListener,
         OtherEndInputFragment.OnOtherEndInputNextSelectedListener,
-        InitializeZonesFragment.OnInitializeNextSelectedListener
+        InitializeZonesFragment.OnInitializeNextSelectedListener,
+        HomePointFragment.OnHomePointNextSelectedListener
 {
 
     MissionOptions mMissionOptions;
     CameraInput mCameraInput;
+    ZonesTimeline mZonesTimeline;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +96,7 @@ public class CreateMissionActivity extends AppCompatActivity
         }
         endLat = 42.390370;
         endLong = -71.300740;
-        ZonesTimeline zonesTimeline = new ZonesTimeline(
+        mZonesTimeline = new ZonesTimeline(
                 mMissionOptions.aircraftType,
                 isFromTailEnd,
                 mediaType,
@@ -102,13 +104,23 @@ public class CreateMissionActivity extends AppCompatActivity
                 endLong,
                 isGeoFenceEnabled);
         InitializeZonesFragment initializeFragment = new InitializeZonesFragment();
-        initializeFragment.setTimeline(zonesTimeline);
+        initializeFragment.setTimeline(mZonesTimeline);
         initializeFragment.setOnInitializeNextSelectedListener(this);
 
         loadFragment(initializeFragment);
     }
+
     @Override
     public void onInitializeNextSelected() {
+        HomePointFragment homePointFragment = new HomePointFragment();
+        homePointFragment.setOnHomePointNextSelectedListener(this);
+        homePointFragment.setTimeline(mZonesTimeline);
+        loadFragment(homePointFragment);
+    }
+
+    @Override
+    public void onHomePointNextSelected(){
+        finish();
     }
     private void loadFragment(Fragment fragment) {
         // create a FragmentManager

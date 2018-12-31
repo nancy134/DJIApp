@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.roboticaircraftinspection.roboticinspection.models.InitializeZones;
 import java.math.BigDecimal;
 
@@ -94,7 +95,7 @@ public class InitializeZonesFragment extends Fragment implements ZonesTimeline.O
         if (initializeZones.homeHeight != 0){
             homeHeightCheck.setEnabled(true);
             homeHeightLabel.setEnabled(true);
-            homeHeightValue.setText(initializeZones.homeHeight);
+            homeHeightValue.setText(String.valueOf(initializeZones.homeHeight));
         } else {
             homeHeightCheck.setEnabled(false);
             homeHeightLabel.setEnabled(false);
@@ -127,7 +128,7 @@ public class InitializeZonesFragment extends Fragment implements ZonesTimeline.O
         if (initializeZones.satelliteCount != 0){
             satelliteCountCheck.setEnabled(true);
             satelliteCountLabel.setEnabled(true);
-            satelliteCountValue.setText(initializeZones.satelliteCount);
+            satelliteCountValue.setText(String.valueOf(initializeZones.satelliteCount));
         } else {
             satelliteCountCheck.setEnabled(false);
             satelliteCountLabel.setEnabled(false);
@@ -151,7 +152,7 @@ public class InitializeZonesFragment extends Fragment implements ZonesTimeline.O
         if (initializeZones.gpsSignalLevel != 0){
             gpsSignalLevelCheck.setEnabled(true);
             gpsSignalLevelLabel.setEnabled(true);
-            gpsSignalLevelValue.setText(initializeZones.gpsSignalLevel);
+            gpsSignalLevelValue.setText(String.valueOf(initializeZones.gpsSignalLevel));
         } else {
             gpsSignalLevelCheck.setEnabled(false);
             gpsSignalLevelLabel.setEnabled(false);
@@ -163,7 +164,7 @@ public class InitializeZonesFragment extends Fragment implements ZonesTimeline.O
         if (initializeZones.maxFlightRadius != 0){
             maxFlightRadiusCheck.setEnabled(true);
             maxFlightRadiusLabel.setEnabled(true);
-            maxFlightRadiusValue.setText(initializeZones.maxFlightRadius);
+            maxFlightRadiusValue.setText(String.valueOf(initializeZones.maxFlightRadius));
         } else {
             maxFlightRadiusCheck.setEnabled(false);
             maxFlightRadiusLabel.setEnabled(false);
