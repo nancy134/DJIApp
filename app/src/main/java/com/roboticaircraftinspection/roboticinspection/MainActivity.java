@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        ImageButton clickButton = (ImageButton) findViewById(R.id.airplane_button);
+        ImageButton clickButton = findViewById(R.id.airplane_button);
         clickButton.setOnClickListener( new View.OnClickListener() {
 
             @Override

@@ -17,28 +17,28 @@ import dji.sdk.mission.timeline.triggers.Trigger;
 import dji.sdk.mission.timeline.triggers.TriggerEvent;
 import dji.sdk.mission.timeline.triggers.WaypointReachedTrigger;
 
-public class Timeline {
+class Timeline {
     private String timelineInfo;
     private TimelineEvent preEvent;
     private TimelineElement preElement;
     private DJIError preError;
     private String runningInfo;
     private static final int earthRadiusInMetres = 6371000;
-    protected double newHomeLatitude;
-    protected double newHomeLongitude;
+    double newHomeLatitude;
+    double newHomeLongitude;
 
-    protected void stopTimeline() {
+    void stopTimeline() {
         MissionControl.getInstance().stopTimeline();
     }
-    protected void pauseTimeline() {
+    void pauseTimeline() {
         MissionControl.getInstance().pauseTimeline();
     }
 
-    protected void resumeTimeline() {
+    void resumeTimeline() {
         MissionControl.getInstance().resumeTimeline();
     }
 
-    protected void setTimelinePlanToText(final String s) {
+    void setTimelinePlanToText(final String s) {
         timelineInfo = timelineInfo + s;
     }
     private Trigger.Listener triggerListener = new Trigger.Listener() {
@@ -56,7 +56,7 @@ public class Timeline {
             }
         });
     }
-    protected void addTrigger(Trigger trigger, Triggerable triggerTarget, String additionalComment) {
+    private void addTrigger(Trigger trigger, Triggerable triggerTarget, String additionalComment) {
 
         if (triggerTarget != null) {
 
@@ -78,26 +78,26 @@ public class Timeline {
         }
     }
 
-    protected void addBatteryPowerLevelTrigger(Triggerable triggerTarget) {
+    void addBatteryPowerLevelTrigger(Triggerable triggerTarget) {
         float value = 20f;
         BatteryPowerLevelTrigger trigger = new BatteryPowerLevelTrigger();
         trigger.setPowerPercentageTriggerValue(value);
         addTrigger(trigger, triggerTarget, " at level " + value);
     }
-    protected void addAircraftLandedTrigger(Triggerable triggerTarget) {
+    void addAircraftLandedTrigger(Triggerable triggerTarget) {
         AircraftLandedTrigger trigger = new AircraftLandedTrigger();
         addTrigger(trigger, triggerTarget, "");
     }
-    protected void addWaypointReachedTrigger(Triggerable triggerTarget, int value) {
+    void addWaypointReachedTrigger(Triggerable triggerTarget, int value) {
         WaypointReachedTrigger trigger = new WaypointReachedTrigger();
         trigger.setWaypointIndex(value);
         addTrigger(trigger, triggerTarget, " at index " + value);
     }
-    protected void setRunningResultToText(final String s) {
+    private void setRunningResultToText(final String s) {
         runningInfo = runningInfo + s;
     }
 
-    protected void updateTimelineStatus(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {
+    void updateTimelineStatus(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {
 
         if (element == preElement && event == preEvent && error == preError) {
             return;
@@ -129,7 +129,7 @@ public class Timeline {
         preError = error;
     }
 
-    protected void movePoint(double hLat, double hLon, double brng, double distanceInMetres) {
+    void movePoint(double hLat, double hLon, double brng, double distanceInMetres) {
         double brngRad = Math.toRadians(brng);
         double latRad = Math.toRadians(hLat);
         double lonRad = Math.toRadians(hLon);

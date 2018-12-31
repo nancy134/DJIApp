@@ -74,20 +74,16 @@ public class CreateMissionActivity extends AppCompatActivity
     @Override
     public void onOtherEndInputNextSelected(OtherEndInput otherEndInput) {
         boolean isGeoFenceEnabled = mMissionOptions.geofence;
-        String mediaType = "BOTH";
+        String mediaType = null;
         if (mMissionOptions.photo && mMissionOptions.video) mediaType = "BOTH";
         else if (mMissionOptions.photo) mediaType = "PHOTO";
         else if (mMissionOptions.video) mediaType = "VIDEO";
         double endLat;
         double endLong;
-        if (otherEndInput.otherEndLongitude.length() == 0){
-            endLat = 0;
-        } else {
+        if (otherEndInput.otherEndLongitude.length() > 0){
             endLat = Double.valueOf(otherEndInput.otherEndLatitude);
         }
-        if (otherEndInput.otherEndLongitude.length() == 0){
-            endLong = 0;
-        } else {
+        if (otherEndInput.otherEndLongitude.length() > 0){
             endLong = Double.valueOf(otherEndInput.otherEndLongitude);
         }
         boolean isFromTailEnd = false;
