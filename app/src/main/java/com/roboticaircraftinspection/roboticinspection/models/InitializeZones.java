@@ -1,11 +1,9 @@
 package com.roboticaircraftinspection.roboticinspection.models;
 
-import dji.common.product.Model;
-
 public class InitializeZones {
     public boolean aircraftFound = false;
     public double droneOrientation = 0;
-    public Model model = null;
+    public String model = null;
     public int homeHeight = 0;
     public String flightOrientationMode = null;
     public boolean lockCourseUsingCurrentHeading = false;

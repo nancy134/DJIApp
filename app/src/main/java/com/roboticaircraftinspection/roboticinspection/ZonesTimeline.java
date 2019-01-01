@@ -298,7 +298,7 @@ public class ZonesTimeline extends Timeline{
             setTimelinePlanToText("compass angle (init)= " + droneOrientation);
 
             model = product.getModel();
-            mInitializeZones.model = model;
+            mInitializeZones.model = model.getDisplayName();
             mCallback.onInitialize(mInitializeZones);
 
             flightController.setGoHomeHeightInMeters(HOME_HEIGHT, new CommonCallbacks.CompletionCallback() {
