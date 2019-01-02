@@ -1,5 +1,6 @@
 package com.roboticaircraftinspection.roboticinspection;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
@@ -22,7 +23,6 @@ public class CreateMissionActivity extends AppCompatActivity
 
     MissionOptions mMissionOptions;
     CameraInput mCameraInput;
-    ZonesTimeline mZonesTimeline;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,9 +75,6 @@ public class CreateMissionActivity extends AppCompatActivity
     public void onOtherEndInputNextSelected(OtherEndInput otherEndInput) {
         boolean isGeoFenceEnabled = mMissionOptions.geofence;
         String mediaType = null;
-        if (mMissionOptions.photo && mMissionOptions.video) mediaType = "BOTH";
-        else if (mMissionOptions.photo) mediaType = "PHOTO";
-        else if (mMissionOptions.video) mediaType = "VIDEO";
         double endLat;
         double endLong;
         if (otherEndInput.otherEndLongitude.length() > 0){
@@ -92,15 +89,16 @@ public class CreateMissionActivity extends AppCompatActivity
         }
         endLat = 42.390370;
         endLong = -71.300740;
-        mZonesTimeline = new ZonesTimeline(
-                mMissionOptions.aircraftType,
-                isFromTailEnd,
-                mediaType,
-                endLat,
-                endLong,
-                isGeoFenceEnabled);
+        if (InspectionApplication.mZonesTimeline == null) {
+            InspectionApplication.mZonesTimeline = new ZonesTimeline(
+                    mMissionOptions.aircraftType,
+                    isFromTailEnd,
+                    endLat,
+                    endLong,
+                    isGeoFenceEnabled);
+        }
         InitializeZonesFragment initializeFragment = new InitializeZonesFragment();
-        initializeFragment.setTimeline(mZonesTimeline);
+        initializeFragment.setTimeline(InspectionApplication.mZonesTimeline);
         initializeFragment.setOnInitializeNextSelectedListener(this);
 
         loadFragment(initializeFragment);
@@ -110,12 +108,18 @@ public class CreateMissionActivity extends AppCompatActivity
     public void onInitializeNextSelected() {
         HomePointFragment homePointFragment = new HomePointFragment();
         homePointFragment.setOnHomePointNextSelectedListener(this);
-        homePointFragment.setTimeline(mZonesTimeline);
+        homePointFragment.setTimeline(InspectionApplication.mZonesTimeline);
         loadFragment(homePointFragment);
     }
 
     @Override
     public void onHomePointNextSelected(){
+
+        InspectionApplication.mZonesTimeline.initTimeline();
+        Intent intent = new Intent();
+        intent.putExtra("EXTRA",1);
+        setResult(RESULT_OK,intent);
+
         finish();
     }
     private void loadFragment(Fragment fragment) {

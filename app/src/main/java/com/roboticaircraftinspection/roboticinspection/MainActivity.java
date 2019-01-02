@@ -3,6 +3,7 @@ package com.roboticaircraftinspection.roboticinspection;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity {
+
+    static final int CREATE_TIMELINE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +42,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), CreateMissionActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, CREATE_TIMELINE);
+            }
+        });
+        ImageButton startButton = findViewById(R.id.play_button);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InspectionApplication.mZonesTimeline.startTimeline();
+            }
+        });
+        ImageButton stopButton = findViewById(R.id.stop_button);
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InspectionApplication.mZonesTimeline.stopTimeline();
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CREATE_TIMELINE){
+            if (resultCode == RESULT_OK){
+
+            }
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.roboticaircraftinspection.roboticinspection;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import dji.sdk.mission.timeline.triggers.WaypointReachedTrigger;
 
 class Timeline {
     private String timelineInfo;
-    private TimelineEvent preEvent;
+    private TimelineEvent preEvent = null;
     private TimelineElement preElement;
     private DJIError preError;
     private String runningInfo;
@@ -95,6 +96,7 @@ class Timeline {
     }
     private void setRunningResultToText(final String s) {
         runningInfo = runningInfo + s;
+        Log.d("TIMELINE",runningInfo);
     }
 
     void updateTimelineStatus(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {

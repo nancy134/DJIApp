@@ -40,6 +40,7 @@ public class HomePointFragment extends Fragment implements ZonesTimeline.OnHomeP
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mZonesTimeline.getHomepoint();
+        mZonesTimeline.initTimeline();
     }
     public void setTimeline(ZonesTimeline zonesTimeline){
         mZonesTimeline = zonesTimeline;

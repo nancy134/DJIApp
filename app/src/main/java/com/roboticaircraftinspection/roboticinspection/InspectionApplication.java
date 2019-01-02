@@ -27,7 +27,7 @@ public class InspectionApplication extends Application {
     private static BaseProduct mProduct;
     private Handler mHandler;
     private DJISDKManager.SDKManagerCallback mDJISDKManagerCallback;
-
+    static ZonesTimeline mZonesTimeline;
     private Application instance;
     public void setContext(Application application) {
         instance = application;
@@ -176,5 +176,4 @@ public class InspectionApplication extends Application {
         }
         return (Aircraft) getProductInstance();
     }
-
 }

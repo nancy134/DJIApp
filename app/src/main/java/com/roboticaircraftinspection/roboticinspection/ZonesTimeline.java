@@ -42,58 +42,53 @@ import dji.sdk.mission.timeline.actions.GoHomeAction;
 import dji.sdk.mission.timeline.actions.TakeOffAction;
 import dji.sdk.products.Aircraft;
 
-public class ZonesTimeline extends Timeline{
+class ZonesTimeline extends Timeline{
 
-    public int HOME_HEIGHT = 30;
-    private String mAcModel = null;
-    private boolean mFlyFromTailEnd = false;
-    private String mMediaType = null;
-    protected double endHomeLatitude = 0;
-    protected double endHomeLongitude = 0;
-    private boolean mIsGeoFenceEnabled = false;
-    protected double homeLatitude = 181;
-    protected double homeLongitude = 181;
+    private int HOME_HEIGHT = 30;
+    private String mAcModel;
+    private boolean mFlyFromTailEnd;
+    private double endHomeLatitude;
+    private double endHomeLongitude;
+    private boolean mIsGeoFenceEnabled;
+    private double homeLatitude = 181;
+    private double homeLongitude = 181;
     private double droneOrientation;
-    ArrayList<GeoLocation> geoLocArray = new ArrayList<GeoLocation>();
-    ArrayList<Double> latArray = new ArrayList<Double>();
-    ArrayList<Double> longArray = new ArrayList<Double>();
+    private ArrayList<Double> latArray = new ArrayList<>();
+    private ArrayList<Double> longArray = new ArrayList<>();
     private FlightController flightController;
     private int satelliteCount;
     private int gpsSignalLevel;
-    protected double oldHomeLatitude;
-    protected double oldHomeLongitude;
+    private double oldHomeLatitude;
+    private double oldHomeLongitude;
     private MissionControl missionControl;
     private double newDroneOrientation;
     private double azimuth;
-    private Waypoint fwdPointOne;
-    protected double m210Latitude  = 0;
-    protected double m210Longitude = 0;
+    private double m210Latitude  = 0;
+    private double m210Longitude = 0;
     private Model model;
-    protected double rtkbLatitude;
-    protected double rtkbLongitude;
-    protected double rtkmLatitude;
-    protected double rtkmLongitude;
-    protected double rtkfLatitude;
-    protected double rtkfLongitude;
+    private double rtkbLatitude;
+    private double rtkbLongitude;
+    private double rtkmLatitude;
+    private double rtkmLongitude;
+    private double rtkfLatitude;
+    private double rtkfLongitude;
     private int maxFlightRadius;
     private String orientationMode;
     private String serialNumber;
 
     private InitializeZones mInitializeZones;
     private HomePoint mHomePoint;
-    ZonesTimeline.OnInitializeListener mCallback;
-    ZonesTimeline.OnHomePointListener mCallbackHomePoint;
+    private ZonesTimeline.OnInitializeListener mCallback;
+    private ZonesTimeline.OnHomePointListener mCallbackHomePoint;
 
-    public ZonesTimeline(
+    ZonesTimeline(
             String acModel,
             boolean isFromTailEnd,
-            String mediaType,
             double endLat,
             double endLong,
             boolean isGeoFenceEnabled){
         mAcModel = acModel;
         mFlyFromTailEnd = isFromTailEnd;
-        mMediaType = mediaType == null ? "BOTH" : mediaType;
         AcModels.setAcDimensions();
         endHomeLatitude = endLat;
         endHomeLongitude = endLong;
@@ -102,21 +97,20 @@ public class ZonesTimeline extends Timeline{
         mHomePoint = new HomePoint();
     }
 
-    public void setOnInitializeListener(Fragment fragment){
-        Log.d("NANCY","setOnInitializeListener");
+    void setOnInitializeListener(Fragment fragment){
         mCallback = (ZonesTimeline.OnInitializeListener)fragment;
     }
     public interface OnInitializeListener {
         void onInitialize(InitializeZones initializeZones);
     }
-    public void setOnHomePointListener(Fragment fragment){
+    void setOnHomePointListener(Fragment fragment){
         mCallbackHomePoint = (ZonesTimeline.OnHomePointListener)fragment;
     }
     public interface OnHomePointListener {
         void onHomePoint(HomePoint homePoint);
     }
 
-    private void initTimeline() {
+    void initTimeline() {
         if (!GeneralUtils.checkGpsCoordinate(homeLatitude, homeLongitude)) {
             ToastUtils.setResultToToast("No home point!!!");
             return;
@@ -140,7 +134,6 @@ public class ZonesTimeline extends Timeline{
         List<TimelineElement> elements = new ArrayList<>();
 
         missionControl = MissionControl.getInstance();
-        final TimelineEvent preEvent = null;
         MissionControl.Listener listener = new MissionControl.Listener() {
             @Override
             public void onEvent(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {
@@ -163,9 +156,14 @@ public class ZonesTimeline extends Timeline{
         //Step 3: start a waypoint mission while the aircraft is still recording the video
         setTimelinePlanToText("Step 3: start a waypoint mission");
         if (!mFlyFromTailEnd) {
-            TimelineElement waypointFuselagePoiMissionNeFwd = TimelineMission.elementFromWaypointMission(initPoiMissionNoseEndFwd());
-            elements.add(waypointFuselagePoiMissionNeFwd);
-            addWaypointReachedTrigger(waypointFuselagePoiMissionNeFwd,1);
+            WaypointMission waypointMission = initPoiMissionNoseEndFwd();
+            if (waypointMission != null) {
+                TimelineElement waypointFuselagePoiMissionNeFwd = TimelineMission.elementFromWaypointMission(waypointMission);
+                if (waypointFuselagePoiMissionNeFwd != null) {
+                    elements.add(waypointFuselagePoiMissionNeFwd);
+                    addWaypointReachedTrigger(waypointFuselagePoiMissionNeFwd, 1);
+                }
+            }
         } else {
             ToastUtils.setResultToToast("Fly from Tail end not supported");
             return;
@@ -198,9 +196,10 @@ public class ZonesTimeline extends Timeline{
         missionControl.scheduleElements(elements);
         missionControl.addListener(listener);
     }
-    private void startTimeline() {
+    public void startTimeline() {
         if (MissionControl.getInstance().scheduledCount() > 0) {
             if (mIsGeoFenceEnabled) {
+                ArrayList<GeoLocation> geoLocArray = new ArrayList<GeoLocation>();
                 if ("MD11".equals(mAcModel)) {
                     geoLocArray = GeneralUtils.buildGeoFencePolygonTest(homeLatitude, homeLongitude, droneOrientation, mAcModel);
                 }else
@@ -257,7 +256,7 @@ public class ZonesTimeline extends Timeline{
         getReadyPointFinal.addAction(new WaypointAction(WaypointActionType.ROTATE_AIRCRAFT, (int)newDroneOrientation));
         getReadyPointFinal.addAction(new WaypointAction(WaypointActionType.GIMBAL_PITCH, -90));
         movePoint(newHomeLatitude, newHomeLongitude, droneOrientation, AcModels.getLengthInMeters(mAcModel)/5);
-        fwdPointOne = new Waypoint(newHomeLatitude, newHomeLongitude, (float) AcModels.getBodyHtInMeters(mAcModel));
+        Waypoint fwdPointOne = new Waypoint(newHomeLatitude, newHomeLongitude, (float) AcModels.getBodyHtInMeters(mAcModel));
         movePoint(newHomeLatitude, newHomeLongitude, droneOrientation, -(AcModels.getLengthInMeters(mAcModel)/5 + AcModels.getStartDistInMeters(mAcModel)));
         Waypoint homePoint = new Waypoint(newHomeLatitude, newHomeLongitude, (float) AcModels.getBodyHtInMeters(mAcModel));
         //
@@ -283,7 +282,7 @@ public class ZonesTimeline extends Timeline{
         setTimelinePlanToText("azimuth=" + azimuth);
 
     }
-    public void initialize(){
+    void initialize(){
         BaseProduct product = InspectionApplication.getProductInstance();
 
         missionControl = MissionControl.getInstance();
@@ -388,7 +387,7 @@ public class ZonesTimeline extends Timeline{
         }
 
     }
-    public void getHomepoint(){
+    void getHomepoint(){
         if (InspectionApplication.getProductInstance() instanceof Aircraft && !GeneralUtils.checkGpsCoordinate(
                 homeLatitude,
                 homeLongitude) && flightController != null) {
@@ -426,7 +425,6 @@ public class ZonesTimeline extends Timeline{
                                         ToastUtils.setResultToToast("setHome using RTK: " + (djiError == null
                                                 ? " - Success"
                                                 : " - Failed " + djiError.getDescription()));
-                                        return;
                                     }
                                 });
                             }
@@ -455,7 +453,6 @@ public class ZonesTimeline extends Timeline{
                     @Override
                     public void onFailure(DJIError djiError) {
                         ToastUtils.setResultToToast("Failed to get home coordinates: " + djiError.getDescription());
-                        return;
                     }
                 });
             }
