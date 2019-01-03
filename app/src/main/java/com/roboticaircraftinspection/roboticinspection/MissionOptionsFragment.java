@@ -44,6 +44,7 @@ public class MissionOptionsFragment extends Fragment {
         );
         missionTypeSpinner.setAdapter(missionListAdapter);
         missionListAdapter.notifyDataSetChanged();
+        missionTypeSpinner.setSelection(MissionType.TEST.position());
 
         Spinner aircraftType = view.findViewById(R.id.spinner_aircraft_type);
         List<String> aircraftList = Arrays.asList(AcModels.ACMODELS);

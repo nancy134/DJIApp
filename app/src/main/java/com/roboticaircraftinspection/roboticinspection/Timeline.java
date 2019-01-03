@@ -31,13 +31,13 @@ class Timeline {
     void stopTimeline() {
         MissionControl.getInstance().stopTimeline();
     }
-    void pauseTimeline() {
-        MissionControl.getInstance().pauseTimeline();
-    }
+    //void pauseTimeline() {
+    //    MissionControl.getInstance().pauseTimeline();
+    //}
 
-    void resumeTimeline() {
-        MissionControl.getInstance().resumeTimeline();
-    }
+    //void resumeTimeline() {
+    //    MissionControl.getInstance().resumeTimeline();
+    //}
 
     void setTimelinePlanToText(final String s) {
         timelineInfo = timelineInfo + s;
@@ -96,7 +96,7 @@ class Timeline {
     }
     private void setRunningResultToText(final String s) {
         runningInfo = runningInfo + s;
-        Log.d("TIMELINE",runningInfo);
+        Log.d("TIMELINE",s);
     }
 
     void updateTimelineStatus(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {

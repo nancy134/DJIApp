@@ -28,6 +28,7 @@ public class InspectionApplication extends Application {
     private Handler mHandler;
     private DJISDKManager.SDKManagerCallback mDJISDKManagerCallback;
     static ZonesTimeline mZonesTimeline;
+    static TestTimeline mTestTimeline;
     private Application instance;
     public void setContext(Application application) {
         instance = application;

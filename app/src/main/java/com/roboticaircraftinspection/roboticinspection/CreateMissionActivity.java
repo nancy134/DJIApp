@@ -18,7 +18,10 @@ public class CreateMissionActivity extends AppCompatActivity
         CameraInputFragment.OnCameraInputNextSelectedListener,
         OtherEndInputFragment.OnOtherEndInputNextSelectedListener,
         InitializeZonesFragment.OnInitializeNextSelectedListener,
-        HomePointFragment.OnHomePointNextSelectedListener
+        HomePointFragment.OnHomePointNextSelectedListener,
+        InitializeTestFragment.OnInitializeTestNextSelectedListener,
+        EndpointFragment.OnEndpointNextSelectedListener,
+        StartingPointFragment.OnStartingPointNextSelectedListener
 {
 
     MissionOptions mMissionOptions;
@@ -38,6 +41,15 @@ public class CreateMissionActivity extends AppCompatActivity
             OtherEndInputFragment otherEndInputFragment = new OtherEndInputFragment();
             otherEndInputFragment.setOnOtherEndInputNextSelectedListener(this);
             loadFragment(otherEndInputFragment);
+        } else if (mMissionOptions.missionType.id() == MissionType.TEST.id()) {
+            if (InspectionApplication.mTestTimeline == null){
+                InspectionApplication.mTestTimeline = new TestTimeline();
+
+            }
+            InitializeTestFragment initializeTestFragment = new InitializeTestFragment();
+            initializeTestFragment.setTimeline(InspectionApplication.mTestTimeline);
+            initializeTestFragment.setOnInitializeTestNextSelectedListener(this);
+            loadFragment(initializeTestFragment);
         } else if (!mMissionOptions.aircraftType.equals("OTHER")) {
 
             CameraInputFragment cameraInputFragment = new CameraInputFragment();
@@ -111,7 +123,6 @@ public class CreateMissionActivity extends AppCompatActivity
         homePointFragment.setTimeline(InspectionApplication.mZonesTimeline);
         loadFragment(homePointFragment);
     }
-
     @Override
     public void onHomePointNextSelected(){
 
@@ -122,6 +133,26 @@ public class CreateMissionActivity extends AppCompatActivity
 
         finish();
     }
+    @Override
+    public void onInitializeTestNextSelected() {
+        EndpointFragment endpointFragment = new EndpointFragment();
+        endpointFragment.setOnEndpointNextSelectedListener(this);
+        endpointFragment.setTimeline(InspectionApplication.mTestTimeline);
+        loadFragment(endpointFragment);
+    }
+    @Override
+    public void onEndpointNextSelected() {
+        StartingPointFragment startingPointFragment = new StartingPointFragment();
+        startingPointFragment.setOnStartingPointNextSelectedListener(this);
+        startingPointFragment.setTimeline(InspectionApplication.mTestTimeline);
+        loadFragment(startingPointFragment);
+    }
+    @Override
+    public void onStartingPointNextSelected() {
+        InspectionApplication.mTestTimeline.initTimeline();
+        finish();
+    }
+
     private void loadFragment(Fragment fragment) {
         // create a FragmentManager
         FragmentManager fm = getSupportFragmentManager();

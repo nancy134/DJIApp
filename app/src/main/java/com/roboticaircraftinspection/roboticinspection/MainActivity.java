@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InspectionApplication.mZonesTimeline.startTimeline();
+                InspectionApplication.mTestTimeline.startTimeline();
             }
         });
         ImageButton stopButton = findViewById(R.id.stop_button);
