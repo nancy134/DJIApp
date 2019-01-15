@@ -28,7 +28,8 @@ public enum MissionType {
     NOSE(5,R.string.nose),
     TAIL(6,R.string.tail),
     LEFT_WING(7,R.string.left_wing),
-    RIGHT_WING(8,R.string.right_wing);
+    RIGHT_WING(8,R.string.right_wing),
+    HOME_POINT(9,R.string.homepoint_test);
 
     private int mResourceId;
     private int mPosition;

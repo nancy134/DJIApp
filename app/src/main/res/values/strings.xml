@@ -40,4 +40,5 @@
     <string name="get_current_point">Get current point</string>
     <string name="place_at_end">Place the drone where you want it to end up and select Get Current Point</string>
     <string name="place_at_start">Place the drone where you to start the mission and select Get Current Point</string>
+    <string name="homepoint_test">Home Point Test</string>
 </resources>

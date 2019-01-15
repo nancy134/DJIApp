@@ -33,8 +33,8 @@ public class StartingPointFragment extends Fragment implements TestTimeline.OnIn
 
         TextView startLatitude = view.findViewById(R.id.starting_point_latitude);
         TextView startLongitude = view.findViewById(R.id.starting_point_longitude);
-        startLatitude.setText(String.format(new BigDecimal(42.390370).toString(), "%f"));
-        startLongitude.setText(String.format(new BigDecimal(-71.300740).toString(), "%f"));
+        startLatitude.setText(String.format(new BigDecimal(42.390400).toString(), "%f"));
+        startLongitude.setText(String.format(new BigDecimal(-71.301120).toString(), "%f"));
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override

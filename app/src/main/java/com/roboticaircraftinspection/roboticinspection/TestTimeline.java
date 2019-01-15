@@ -3,18 +3,24 @@ package com.roboticaircraftinspection.roboticinspection;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.roboticaircraftinspection.roboticinspection.models.InitializeTest;
-import com.roboticaircraftinspection.roboticinspection.models.InitializeZones;
 import com.roboticaircraftinspection.roboticinspection.utils.GeneralUtils;
 import com.roboticaircraftinspection.roboticinspection.utils.ToastUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import dji.common.error.DJIError;
 import dji.common.flightcontroller.FlightControllerState;
 import dji.common.flightcontroller.FlightMode;
+import dji.common.mission.waypoint.Waypoint;
+import dji.common.mission.waypoint.WaypointAction;
+import dji.common.mission.waypoint.WaypointActionType;
+import dji.common.mission.waypoint.WaypointMission;
 import dji.common.model.LocationCoordinate2D;
 import dji.common.product.Model;
 import dji.common.util.CommonCallbacks;
@@ -23,11 +29,12 @@ import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.mission.MissionControl;
 import dji.sdk.mission.timeline.TimelineElement;
 import dji.sdk.mission.timeline.TimelineEvent;
+import dji.sdk.mission.timeline.TimelineMission;
 import dji.sdk.mission.timeline.actions.GoHomeAction;
 import dji.sdk.mission.timeline.actions.TakeOffAction;
 import dji.sdk.products.Aircraft;
 
-public class TestTimeline extends Timeline {
+class TestTimeline extends Timeline {
 
     private MissionControl missionControl;
     private Model model;
@@ -107,19 +114,19 @@ public class TestTimeline extends Timeline {
             mCallbackInitialize.onInitializeTest(mInitializeTest);
         }
     }
-    public void getEndPoint(){
-        getHomepoint();
-        mInitializeTest.endLatitude = homeLatitude;
-        mInitializeTest.endLongitude = homeLongitude;
+    void getEndPoint(){
+        //getHomepoint();
+        //mInitializeTest.endLatitude = homeLatitude;
+        //mInitializeTest.endLongitude = homeLongitude;
         mCallbackInitialize.onInitializeTest(mInitializeTest);
     }
-    public void getStartingPoint(){
+    void getStartingPoint(){
         getHomepoint();
         mInitializeTest.startLatitude = homeLatitude;
         mInitializeTest.startLongitude = homeLongitude;
         mCallbackInitialize.onInitializeTest(mInitializeTest);
     }
-    void getHomepoint(){
+    private void getHomepoint(){
         if (InspectionApplication.getProductInstance() instanceof Aircraft &&
                 !GeneralUtils.checkGpsCoordinate(homeLatitude, homeLongitude) &&
                 flightController != null) {
@@ -148,6 +155,58 @@ public class TestTimeline extends Timeline {
         };
         List<TimelineElement> elements = new ArrayList<>();
         elements.add(new TakeOffAction());
+        List<Waypoint> waypoints = new LinkedList<>();
+        WaypointMission.Builder waypointMissionBuilder = GeneralUtils.getWaypointMissionBuilder();
+
+        /*
+        Log.d("TIMELINE","endLatitude: "+mInitializeTest.endLatitude);
+        Log.d("TIMELINE","endLongitude: "+mInitializeTest.endLongitude);
+        Waypoint goToEndpoint = new Waypoint(
+                mInitializeTest.endLatitude,
+                mInitializeTest.endLongitude,
+                30f);
+        Log.d("TIMELINE","goToEndpoint: "+goToEndpoint);
+        waypoints.add(goToEndpoint);
+        Log.d("TIMELINE","startLatitude: "+mInitializeTest.startLatitude);
+        Log.d("TIMELINE","startLongitude: "+mInitializeTest.startLongitude);
+        Waypoint goToStartpoint = new Waypoint(
+                mInitializeTest.startLatitude,
+                mInitializeTest.startLongitude,
+                30f);
+        waypoints.add(goToStartpoint);
+        */
+
+        Waypoint one = new Waypoint(
+                42.39037644,
+                -71.301167,
+                5f
+        );
+        waypoints.add(one);
+        Waypoint two = new Waypoint(
+                42.39037644,
+                -71.30106928,
+                5f
+        );
+        waypoints.add(two);
+        Waypoint three = new Waypoint(
+                42.390304,
+                -71.30106928,
+                5f
+        );
+        waypoints.add(three);
+
+        Log.d("TIMELINE","waypoints.size: "+waypoints.size());
+        waypointMissionBuilder.waypointList(waypoints).waypointCount(waypoints.size());
+        WaypointMission waypointMission = waypointMissionBuilder.build();
+        TimelineElement timelineElement = TimelineMission.elementFromWaypointMission(waypointMission);
+        if (timelineElement != null) {
+            Log.d("TIMELINE", "Waypoint: " + timelineElement.toString());
+            addWaypointReachedTrigger(timelineElement, 1);
+            elements.add(timelineElement);
+        } else {
+            Log.d("TIMELINE", "Waypoint not added");
+        }
+
         elements.add(new GoHomeAction());
         addAircraftLandedTrigger(missionControl);
 
@@ -159,7 +218,7 @@ public class TestTimeline extends Timeline {
         missionControl.scheduleElements(elements);
         missionControl.addListener(listener);
     }
-    public void startTimeline() {
+    void startTimeline() {
         if (MissionControl.getInstance().scheduledCount() > 0) {
             MissionControl.getInstance().startTimeline();
         }

@@ -171,7 +171,6 @@ public class GeneralUtils {
 
     public static WaypointMission.Builder getWaypointMissionBuilder()
     {
-
         WaypointMission.Builder waypointMissionBuilder = new WaypointMission.Builder().autoFlightSpeed(2f)
                 .maxFlightSpeed(5f)
                 .setExitMissionOnRCSignalLostEnabled(false)
