@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
+import com.roboticaircraftinspection.roboticinspection.db.AircraftType;
 import com.roboticaircraftinspection.roboticinspection.models.CameraInput;
 import com.roboticaircraftinspection.roboticinspection.models.MissionOptions;
 import com.roboticaircraftinspection.roboticinspection.models.MissionType;
@@ -21,7 +22,8 @@ public class CreateMissionActivity extends AppCompatActivity
         HomePointFragment.OnHomePointNextSelectedListener,
         InitializeTestFragment.OnInitializeTestNextSelectedListener,
         EndpointFragment.OnEndpointNextSelectedListener,
-        StartingPointFragment.OnStartingPointNextSelectedListener
+        StartingPointFragment.OnStartingPointNextSelectedListener,
+        AircraftFragment.OnAircraftNextSelectedListener
 {
 
     MissionOptions mMissionOptions;
@@ -30,9 +32,12 @@ public class CreateMissionActivity extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_mission);
-        MissionOptionsFragment missionOptionsFragment = new MissionOptionsFragment();
-        missionOptionsFragment.setOnOptionsNextSelectedListener(this);
-        loadFragment(missionOptionsFragment);
+        //MissionOptionsFragment missionOptionsFragment = new MissionOptionsFragment();
+        //missionOptionsFragment.setOnOptionsNextSelectedListener(this);
+        //loadFragment(missionOptionsFragment);
+        AircraftFragment aircraftFragment = new AircraftFragment();
+        aircraftFragment.setOnAircraftNextSelectedListener(this);
+        loadFragment(aircraftFragment);
 
     }
     public void onOptionsNextSelected(MissionOptions options){
@@ -152,7 +157,10 @@ public class CreateMissionActivity extends AppCompatActivity
         InspectionApplication.mTestTimeline.initTimeline();
         finish();
     }
+    @Override
+    public void onAircraftNextSelected(AircraftType aircraftType){
 
+    }
     private void loadFragment(Fragment fragment) {
         // create a FragmentManager
         FragmentManager fm = getSupportFragmentManager();
