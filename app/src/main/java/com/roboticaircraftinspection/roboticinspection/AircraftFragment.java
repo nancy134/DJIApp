@@ -9,13 +9,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import com.roboticaircraftinspection.roboticinspection.db.AircraftType;
 import com.roboticaircraftinspection.roboticinspection.db.DatabaseClient;
 import com.roboticaircraftinspection.roboticinspection.rest.AircraftRemote;
 import com.roboticaircraftinspection.roboticinspection.rest.Api;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 import retrofit2.Call;
@@ -66,28 +69,33 @@ public class AircraftFragment extends Fragment {
         });
         return view;
     }
-    private static void readData(){
-        class ReadData extends AsyncTask<Void, Void, List<AircraftType>> {
-            @Override
-            protected List<AircraftType> doInBackground(Void... voids){
-                return DatabaseClient
-                        .getInstance(MApplication.getContext())
-                        .getAppDatabase()
-                        .aircraftDao()
-                        .getAll();
-            }
-            @Override
-            protected void onPostExecute(List<AircraftType> aircraftTypes){
-                super.onPostExecute(aircraftTypes);
-
-                Log.d("NANCY","Data read");
-                Log.d("NANCY", "size: "+aircraftTypes.size());
-            }
-        }
-        ReadData readData = new ReadData();
+    private void readData(){
+        ReadData readData = new ReadData(this);
         readData.execute();
     }
-    private static void deleteData(){
+    private static class ReadData extends AsyncTask<Void, Void, List<AircraftType>> {
+        private WeakReference<AircraftFragment> fragmentReference;
+        ReadData(AircraftFragment fragment){
+            fragmentReference = new WeakReference<>(fragment);
+        }
+        @Override
+        protected List<AircraftType> doInBackground(Void... voids){
+            return DatabaseClient
+                    .getInstance(MApplication.getContext())
+                    .getAppDatabase()
+                    .aircraftDao()
+                    .getAll();
+        }
+        @Override
+        protected void onPostExecute(List<AircraftType> aircraftTypes){
+            super.onPostExecute(aircraftTypes);
+            AircraftFragment fragment = fragmentReference.get();
+            fragment.updateSpinner(aircraftTypes);
+            Log.d("NANCY","Data read");
+            Log.d("NANCY", "size: "+aircraftTypes.size());
+        }
+    }
+    private void deleteData(){
         class DeleteAll extends AsyncTask<Void, Void, Void> {
             @Override
             protected Void doInBackground(Void...voids){
@@ -106,7 +114,7 @@ public class AircraftFragment extends Fragment {
         DeleteAll deleteAll = new DeleteAll();
         deleteAll.execute();
     }
-    private static void downloadData(){
+    private void downloadData(){
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Api.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
@@ -138,7 +146,7 @@ public class AircraftFragment extends Fragment {
             }
         });
     }
-    private static void saveData(
+    private void saveData(
             int id,
             String name,
             double noseLatitude,
@@ -175,6 +183,20 @@ public class AircraftFragment extends Fragment {
         }
         SaveAircraft saveAircraft = new SaveAircraft();
         saveAircraft.execute();
+    }
+    private void updateSpinner(List<AircraftType> aircraftTypes){
+        Log.d("NANCY","Update spinner");
+        for (int i=0; i<aircraftTypes.size(); i++){
+            Log.d("NANCY", "name: "+aircraftTypes.get(i).getName());
+        }
+        Spinner aircraftType = view.findViewById(R.id.spinner_aircraft);
+        ArrayAdapter<AircraftType> spinnerAdapter = new ArrayAdapter<>(
+                view.getContext(),
+                R.layout.support_simple_spinner_dropdown_item,
+                aircraftTypes);
+        aircraftType.setAdapter(spinnerAdapter);
+        spinnerAdapter.notifyDataSetChanged();
+
     }
     public void setOnAircraftNextSelectedListener(Activity activity){
         mCallback = (AircraftFragment.OnAircraftNextSelectedListener)activity;

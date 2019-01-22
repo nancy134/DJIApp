@@ -41,6 +41,13 @@
                 android:layout_marginBottom="10dp"
                 android:layout_marginEnd="10dp"
                 android:text="@string/read_data"/>
+            <Spinner
+                android:id="@+id/spinner_aircraft"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+            </Spinner>
+
         </LinearLayout>
         <View
             android:layout_width="0dp"
