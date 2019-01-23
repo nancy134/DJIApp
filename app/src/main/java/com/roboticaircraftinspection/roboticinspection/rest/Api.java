@@ -10,4 +10,7 @@ public interface Api {
 
     @GET("test.php")
     Call<List<AircraftRemote>> getAircraft();
+
+    @GET("waypoints.php")
+    Call<List<WaypointsRemote>> getWaypoints();
 }
