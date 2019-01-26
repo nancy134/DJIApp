@@ -8,7 +8,7 @@ import retrofit2.http.GET;
 public interface Api {
     String BASE_URL = "http://dev.virtualopenexchange.com/vex_pages/";
 
-    @GET("test.php")
+    @GET("aircraft.php")
     Call<List<AircraftRemote>> getAircraft();
 
     @GET("waypoints.php")

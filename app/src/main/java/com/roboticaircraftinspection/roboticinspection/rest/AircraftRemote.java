@@ -3,24 +3,21 @@ package com.roboticaircraftinspection.roboticinspection.rest;
 public class AircraftRemote {
     private int id;
     private String name;
-    private double noseLatitude;
-    private double noseLongitude;
-    private double tailLatitude;
-    private double tailLongitude;
+    private double heading;
+    private double latitude;
+    private double longitude;
 
     public AircraftRemote(
             int id,
             String name,
-            double noseLatitude,
-            double noseLongitude,
-            double tailLatitude,
-            double tailLongitude){
+            double heading,
+            double latitude,
+            double longitude){
         this.id = id;
         this.name = name;
-        this.noseLatitude = noseLatitude;
-        this.noseLongitude = noseLongitude;
-        this.tailLatitude = tailLatitude;
-        this.tailLongitude = tailLongitude;
+        this.heading = heading;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
     public int getId(){
         return this.id;
@@ -28,19 +25,14 @@ public class AircraftRemote {
     public String getName(){
         return this.name;
     }
-    public double getNoseLatitude(){
-        return this.noseLatitude;
+    public double getHeading(){
+        return this.heading;
+    }
+    public double getLatitude(){
+        return this.latitude;
+    }
+    public double getLongitude(){
+        return this.longitude;
     }
 
-    public double getNoseLongitude() {
-        return this.noseLongitude;
-    }
-
-    public double getTailLatitude() {
-        return this.tailLatitude;
-    }
-
-    public double getTailLongitude() {
-        return this.tailLongitude;
-    }
 }

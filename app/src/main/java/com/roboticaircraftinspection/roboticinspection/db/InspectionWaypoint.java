@@ -23,6 +23,15 @@ public class InspectionWaypoint {
     @ColumnInfo(name="longitude")
     private double longitude;
 
+    @ColumnInfo(name="x")
+    private double x;
+
+    @ColumnInfo(name="y")
+    private double y;
+
+    @ColumnInfo(name="prev_waypoint")
+    private int prev_waypoint;
+
     int getId(){
         return this.id;
     }
@@ -46,5 +55,26 @@ public class InspectionWaypoint {
     }
     void setLongitude(double longitude){
         this.longitude = longitude;
+    }
+
+    double getX(){
+        return this.x;
+    }
+    void setX(double x){
+        this.x = x;
+    }
+
+    double getY(){
+        return this.y;
+    }
+    void setY(double y){
+        this.y = y;
+    }
+
+    int getPrev_waypoint(){
+        return this.prev_waypoint;
+    }
+    void setPrev_waypoint(int prev_waypoint){
+        this.prev_waypoint = prev_waypoint;
     }
 }

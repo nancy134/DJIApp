@@ -44,4 +44,5 @@
     <string name="download_data">Download data...</string>
     <string name="read_data">Read Data...</string>
     <string name="delete_data">Delete Data...</string>
+    <string name="select_aircraft">Select aircraft:</string>
 </resources>

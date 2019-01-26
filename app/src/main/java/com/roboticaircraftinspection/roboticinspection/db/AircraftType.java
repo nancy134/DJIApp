@@ -15,17 +15,14 @@ public class AircraftType implements Serializable {
     @ColumnInfo(name="name")
     private String name;
 
-    @ColumnInfo(name="noseLatitude")
-    private double noseLatitude = 0.0;
+    @ColumnInfo(name="heading")
+    private double heading;
 
-    @ColumnInfo(name="noseLongitude")
-    private double noseLongitude = 0.0;
+    @ColumnInfo(name="latitude")
+    private double latitude;
 
-    @ColumnInfo(name="tailLatitude")
-    private double tailLatitude = 0.0;
-
-    @ColumnInfo(name="tailLongitude")
-    private double tailLongitude = 0.0;
+    @ColumnInfo(name="longitude")
+    private double longitude;
 
     public int getId(){
         return id;
@@ -39,32 +36,24 @@ public class AircraftType implements Serializable {
     public void setName(String name){
         this.name = name;
     }
-
-    double getNoseLatitude(){
-        return noseLatitude;
+    double getHeading(){
+        return heading;
     }
-    public void setNoseLatitude(double noseLatitude){
-        this.noseLatitude = noseLatitude;
+    public void setHeading(double heading){
+        this.heading = heading;
     }
-    double getNoseLongitude(){
-        return noseLongitude;
+    double getLatitude() {
+        return latitude;
     }
-    public void setNoseLongitude(double noseLongitude){
-        this.noseLongitude = noseLongitude;
+    public void setLatitude(double latitude){
+        this.latitude = latitude;
     }
-    double getTailLatitude(){
-        return tailLatitude;
+    double getLongitude(){
+        return this.longitude;
     }
-    public void setTailLatitude(double tailLatitude){
-        this.tailLatitude = tailLatitude;
+    public void setLongitude(double longitude){
+        this.latitude = longitude;
     }
-    double getTailLongitude() {
-        return tailLongitude;
-    }
-    public void setTailLongitude(double tailLongitude){
-        this.tailLongitude = tailLongitude;
-    }
-
     @Override
     public @NonNull String toString() {
         return getName();
