@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.roboticaircraftinspection.roboticinspection.db.AircraftType;
 import com.roboticaircraftinspection.roboticinspection.models.CameraInput;
@@ -13,6 +14,7 @@ import com.roboticaircraftinspection.roboticinspection.models.MissionOptions;
 import com.roboticaircraftinspection.roboticinspection.models.MissionType;
 import com.roboticaircraftinspection.roboticinspection.models.OtherEndInput;
 import com.roboticaircraftinspection.roboticinspection.models.StartMission;
+import com.roboticaircraftinspection.roboticinspection.models.TaskType;
 
 public class CreateMissionActivity extends AppCompatActivity
     implements MissionOptionsFragment.OnOptionsNextSelectedListener,
@@ -23,7 +25,8 @@ public class CreateMissionActivity extends AppCompatActivity
         InitializeTestFragment.OnInitializeTestNextSelectedListener,
         EndpointFragment.OnEndpointNextSelectedListener,
         StartingPointFragment.OnStartingPointNextSelectedListener,
-        AircraftFragment.OnAircraftNextSelectedListener
+        AircraftFragment.OnAircraftNextSelectedListener,
+        TaskSelectionFragment.OnTaskSelectionNextSelectedListener
 {
 
     MissionOptions mMissionOptions;
@@ -32,13 +35,18 @@ public class CreateMissionActivity extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_mission);
+
         //MissionOptionsFragment missionOptionsFragment = new MissionOptionsFragment();
         //missionOptionsFragment.setOnOptionsNextSelectedListener(this);
         //loadFragment(missionOptionsFragment);
-        AircraftFragment aircraftFragment = new AircraftFragment();
-        aircraftFragment.setOnAircraftNextSelectedListener(this);
-        loadFragment(aircraftFragment);
 
+        //AircraftFragment aircraftFragment = new AircraftFragment();
+        //aircraftFragment.setOnAircraftNextSelectedListener(this);
+        //loadFragment(aircraftFragment);
+
+        TaskSelectionFragment taskSelectionFragment = new TaskSelectionFragment();
+        taskSelectionFragment.setOnTaskSelectionNextSelectedListener(this);
+        loadFragment(taskSelectionFragment);
     }
     public void onOptionsNextSelected(MissionOptions options){
         mMissionOptions = new MissionOptions(options);
@@ -160,6 +168,10 @@ public class CreateMissionActivity extends AppCompatActivity
     @Override
     public void onAircraftNextSelected(AircraftType aircraftType){
 
+    }
+    @Override
+    public void onTaskSelectionNextSelected(TaskType selectedTaskType){
+        Log.d("NANCY", "selectedTaskType: "+selectedTaskType.toString());
     }
     private void loadFragment(Fragment fragment) {
         // create a FragmentManager
