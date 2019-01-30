@@ -48,4 +48,5 @@
     <string name="task_select_task">Select task</string>
     <string name="task_load_waypoints">Load Waypoint file</string>
     <string name="task_inspect_aircraft">Inspect aircraft</string>
+    <string name="load_csv">Load CSV File</string>
 </resources>

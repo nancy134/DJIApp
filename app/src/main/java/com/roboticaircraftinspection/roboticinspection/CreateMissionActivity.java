@@ -26,7 +26,8 @@ public class CreateMissionActivity extends AppCompatActivity
         EndpointFragment.OnEndpointNextSelectedListener,
         StartingPointFragment.OnStartingPointNextSelectedListener,
         AircraftFragment.OnAircraftNextSelectedListener,
-        TaskSelectionFragment.OnTaskSelectionNextSelectedListener
+        TaskSelectionFragment.OnTaskSelectionNextSelectedListener,
+        LoadCSVFragment.OnLoadCSVNextSelectedListener
 {
 
     MissionOptions mMissionOptions;
@@ -172,6 +173,15 @@ public class CreateMissionActivity extends AppCompatActivity
     @Override
     public void onTaskSelectionNextSelected(TaskType selectedTaskType){
         Log.d("NANCY", "selectedTaskType: "+selectedTaskType.toString());
+        if (selectedTaskType.id() == TaskType.LOAD_WAYPOINTS.id()){
+            LoadCSVFragment loadCSVFragment = new LoadCSVFragment();
+            loadCSVFragment.setOnLoadCSVNextSelectedListener(this);
+            loadFragment(loadCSVFragment);
+        }
+    }
+    @Override
+    public void onLoadCSVNextSelected(){
+        Log.d("NANCY","CSV File loaded");
     }
     private void loadFragment(Fragment fragment) {
         // create a FragmentManager
