@@ -1,7 +1,6 @@
 package com.roboticaircraftinspection.roboticinspection.utils;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,7 +75,6 @@ public class ItemArrayAdapter extends ArrayAdapter<String[]> {
             viewHolder = (ItemViewHolder)row.getTag();
         }
         String[] stat = getItem(position);
-        Log.d("NANCY","position: "+position+" stat: "+stat);
         viewHolder.XLatM.setText(stat[2]);
         viewHolder.YLonM.setText(stat[3]);
         viewHolder.alt.setText(stat[4]);

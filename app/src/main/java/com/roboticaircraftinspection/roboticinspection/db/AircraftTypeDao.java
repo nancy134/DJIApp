@@ -17,11 +17,14 @@ public interface AircraftTypeDao {
     @Query("SELECT * FROM aircrafttype WHERE id=:id")
     AircraftType findById(int id);
 
+    @Query("SELECT * FROM aircraftType WHERE name=:name")
+    List<AircraftType> findByName(String name);
+
     @Query("DELETE FROM aircrafttype")
     void deleteAll();
 
     @Insert
-    void insert(AircraftType aircraftType);
+    Long insert(AircraftType aircraftType);
 
     @Delete
     void delete(AircraftType aircraftType);

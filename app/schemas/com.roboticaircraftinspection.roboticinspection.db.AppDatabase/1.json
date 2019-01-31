@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ba969c97db1b4c98d77fa49757e099eb",
+    "identityHash": "ed34c3de1e3f3c3d493ba3121c46150c",
     "entities": [
       {
         "tableName": "AircraftType",
@@ -50,7 +50,7 @@
       },
       {
         "tableName": "InspectionWaypoint",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `aircraft_id` INTEGER NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `x` REAL NOT NULL, `y` REAL NOT NULL, `prev_waypoint` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`aircraft_id`) REFERENCES `AircraftType`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `aircraft_id` INTEGER NOT NULL, `x` REAL NOT NULL, `y` REAL NOT NULL, `altitude` REAL NOT NULL, `heading` REAL NOT NULL, FOREIGN KEY(`aircraft_id`) REFERENCES `AircraftType`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -62,18 +62,6 @@
             "fieldPath": "aircraft_id",
             "columnName": "aircraft_id",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "latitude",
-            "columnName": "latitude",
-            "affinity": "REAL",
-            "notNull": true
-          },
-          {
-            "fieldPath": "longitude",
-            "columnName": "longitude",
-            "affinity": "REAL",
             "notNull": true
           },
           {
@@ -89,9 +77,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "prev_waypoint",
-            "columnName": "prev_waypoint",
-            "affinity": "INTEGER",
+            "fieldPath": "altitude",
+            "columnName": "altitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "heading",
+            "columnName": "heading",
+            "affinity": "REAL",
             "notNull": true
           }
         ],
@@ -99,7 +93,7 @@
           "columnNames": [
             "id"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [
           {
@@ -128,7 +122,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ba969c97db1b4c98d77fa49757e099eb\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ed34c3de1e3f3c3d493ba3121c46150c\")"
     ]
   }
 }

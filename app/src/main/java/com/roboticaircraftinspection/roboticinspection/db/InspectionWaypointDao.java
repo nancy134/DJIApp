@@ -20,7 +20,7 @@ public interface InspectionWaypointDao {
     void deleteAll();
 
     @Insert
-    void insert(InspectionWaypoint inspectionWaypoint);
+    Long insert(InspectionWaypoint inspectionWaypoint);
 
     @Delete
     void delete(InspectionWaypoint inspectionWaypoint);

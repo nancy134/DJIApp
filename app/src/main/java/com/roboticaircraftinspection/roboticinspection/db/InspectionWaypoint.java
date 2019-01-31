@@ -13,15 +13,9 @@ import android.arch.persistence.room.PrimaryKey;
         indices = {@Index("aircraft_id")})
 
 public class InspectionWaypoint {
-    @PrimaryKey()
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private int aircraft_id;
-
-    @ColumnInfo(name="latitude")
-    private double latitude;
-
-    @ColumnInfo(name="longitude")
-    private double longitude;
 
     @ColumnInfo(name="x")
     private double x;
@@ -29,52 +23,52 @@ public class InspectionWaypoint {
     @ColumnInfo(name="y")
     private double y;
 
-    @ColumnInfo(name="prev_waypoint")
-    private int prev_waypoint;
+    @ColumnInfo(name="altitude")
+    private double altitude;
+
+    @ColumnInfo(name="heading")
+    private double heading;
 
     int getId(){
         return this.id;
     }
-    void setId(int id){
+    public void setId(int id){
         this.id = id;
     }
+
     int getAircraft_id(){
         return this.aircraft_id;
     }
-    void setAircraft_id(int aircraftId){
+    public void setAircraft_id(int aircraftId){
         this.aircraft_id = aircraftId;
-    }
-    double getLatitude(){
-        return this.latitude;
-    }
-    void setLatitude(double latitude){
-        this.latitude = latitude;
-    }
-    double getLongitude(){
-        return this.longitude;
-    }
-    void setLongitude(double longitude){
-        this.longitude = longitude;
     }
 
     double getX(){
         return this.x;
     }
-    void setX(double x){
+    public void setX(double x){
         this.x = x;
     }
 
     double getY(){
         return this.y;
     }
-    void setY(double y){
+    public void setY(double y){
         this.y = y;
     }
 
-    int getPrev_waypoint(){
-        return this.prev_waypoint;
+    double getAltitude(){
+        return this.altitude;
     }
-    void setPrev_waypoint(int prev_waypoint){
-        this.prev_waypoint = prev_waypoint;
+    public void setAltitude(double altitude){
+        this.altitude = altitude;
     }
+
+    double getHeading(){
+        return this.heading;
+    }
+    public void setHeading(double heading){
+        this.heading = heading;
+    }
+
 }
