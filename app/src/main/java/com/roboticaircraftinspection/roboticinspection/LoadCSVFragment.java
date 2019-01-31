@@ -2,6 +2,7 @@ package com.roboticaircraftinspection.roboticinspection;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -13,18 +14,24 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
+import com.roboticaircraftinspection.roboticinspection.db.AircraftType;
+import com.roboticaircraftinspection.roboticinspection.db.DatabaseClient;
 import com.roboticaircraftinspection.roboticinspection.utils.CSVFile;
 import com.roboticaircraftinspection.roboticinspection.utils.ItemArrayAdapter;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public class LoadCSVFragment extends Fragment {
     View view;
     Button nextButton;
     Button loadCSVButton;
+    Button saveButton;
     ListView listView;
     ItemArrayAdapter itemArrayAdapter;
+    List<String[]> waypoints;
+    String CSVFilePath;
     int FILE_REQUEST_CODE = 0;
     LoadCSVFragment.OnLoadCSVNextSelectedListener mCallback;
     @Override
@@ -42,38 +49,60 @@ public class LoadCSVFragment extends Fragment {
         loadCSVButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ChooserDialog().with(view.getContext())
-                        .withChosenListener(new ChooserDialog.Result() {
-                            @Override
-                            public void onChoosePath(String path, File pathFile) {
-                                Log.d("NANCY", "path: "+path);
-                                CSVFile csvFile = new CSVFile(path);
-                                List<String[]> waypoints = csvFile.read();
-                                Log.d("NANCY", "waypoints length: "+waypoints.get(0).length);
-                                for(String[] waypointData:waypoints ) {
-                                    itemArrayAdapter.add(waypointData);
-                                }
-                                listView.setAdapter(itemArrayAdapter);
-                           }
-                        })
-                        .build()
-                        .show();
-                /*
-                Intent intent = new Intent(view.getContext(), FilePickerActivity.class);
-                intent.putExtra(FilePickerActivity.CONFIGS,new Configurations.Builder()
-                        .setShowImages(false)
-                        .setShowVideos(false)
-                        .setShowFiles(true)
-                        .setSuffixes("csv")
-                        .setSingleChoiceMode(true).build());
-
-                startActivityForResult(intent, FILE_REQUEST_CODE);
-                */
+                new ChooserDialog().with(view.getContext()).withChosenListener(new ChooserDialog.Result() {
+                    @Override
+                    public void onChoosePath(String path, File pathFile) {
+                        CSVFilePath = path;
+                        CSVFile csvFile = new CSVFile(path);
+                        waypoints = csvFile.read();
+                        for(String[] waypointData:waypoints ) {
+                            itemArrayAdapter.add(waypointData);
+                        }
+                        listView.setAdapter(itemArrayAdapter);
+                    }
+                }).build().show();
+            }
+        });
+        saveButton = view.findViewById(R.id.save_to_database);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveAircraft();
             }
         });
         listView = view.findViewById(R.id.listView);
         itemArrayAdapter = new ItemArrayAdapter(view.getContext(), R.layout.item_layout);
         return view;
+    }
+    private void saveAircraft(){
+        if (waypoints.size() >= 2) {
+            String[] secondRow = waypoints.get(1);
+            AircraftType aircraftType = new AircraftType();
+            aircraftType.setName(CSVFilePath);
+            aircraftType.setHeading(Double.valueOf(secondRow[5]));
+            aircraftType.setLatitude(Double.valueOf(secondRow[0]));
+            aircraftType.setLongitude(Double.valueOf(secondRow[1]));
+            LoadCSVFragment.SaveAircraft saveAircraft = new LoadCSVFragment.SaveAircraft(this);
+            saveAircraft.execute(aircraftType);
+        }
+    }
+    private static class SaveAircraft extends AsyncTask<AircraftType, Void, Void> {
+        private WeakReference<LoadCSVFragment> fragmentReference;
+        SaveAircraft(LoadCSVFragment fragment){
+            fragmentReference = new WeakReference<>(fragment);
+        }
+        @Override
+        protected Void doInBackground(AircraftType...params){
+            AircraftType aircraftType = params[0];
+            DatabaseClient.getInstance(MApplication.getContext()).getAppDatabase()
+                    .aircraftDao()
+                    .insert(aircraftType);
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid){
+            super.onPostExecute(aVoid);
+        }
     }
 
     @Override

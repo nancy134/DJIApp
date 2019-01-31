@@ -49,4 +49,6 @@
     <string name="task_load_waypoints">Load Waypoint file</string>
     <string name="task_inspect_aircraft">Inspect aircraft</string>
     <string name="load_csv">Load CSV File</string>
+    <string name="save_to_database">Save to database</string>
+    <string name="cancel">Cancel</string>
 </resources>

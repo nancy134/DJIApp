@@ -177,6 +177,10 @@ public class CreateMissionActivity extends AppCompatActivity
             LoadCSVFragment loadCSVFragment = new LoadCSVFragment();
             loadCSVFragment.setOnLoadCSVNextSelectedListener(this);
             loadFragment(loadCSVFragment);
+        } else if (selectedTaskType.id() == TaskType.INSPECT_AIRCRAFT.id()){
+            AircraftFragment aircraftFragment = new AircraftFragment();
+            aircraftFragment.setOnAircraftNextSelectedListener(this);
+            loadFragment(aircraftFragment);
         }
     }
     @Override
