@@ -29,6 +29,7 @@ public class InspectionApplication extends Application {
     private DJISDKManager.SDKManagerCallback mDJISDKManagerCallback;
     static ZonesTimeline mZonesTimeline;
     static TestTimeline mTestTimeline;
+    static WaypointTimeline waypointTimeline;
     private Application instance;
     public void setContext(Application application) {
         instance = application;

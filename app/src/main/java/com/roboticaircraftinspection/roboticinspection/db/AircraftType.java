@@ -36,7 +36,7 @@ public class AircraftType implements Serializable {
     public void setName(String name){
         this.name = name;
     }
-    double getHeading(){
+    public double getHeading(){
         return heading;
     }
     public void setHeading(double heading){

@@ -13,13 +13,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.roboticaircraftinspection.roboticinspection.db.AircraftType;
 import com.roboticaircraftinspection.roboticinspection.db.DatabaseClient;
+import com.roboticaircraftinspection.roboticinspection.db.InspectionWaypoint;
 import com.roboticaircraftinspection.roboticinspection.rest.AircraftRemote;
 import com.roboticaircraftinspection.roboticinspection.rest.Api;
 
 import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.util.List;
 
 import retrofit2.Call;
@@ -36,6 +39,7 @@ public class AircraftFragment extends Fragment {
     int aircraftIndex;
     ProgressBar progressBar;
     List<AircraftRemote> aircraftRemoteList;
+    AircraftType selectedAircraftType;
     AircraftFragment.OnAircraftNextSelectedListener mCallback;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -46,8 +50,11 @@ public class AircraftFragment extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AircraftType aircraftType = new AircraftType();
-                mCallback.onAircraftNextSelected(aircraftType);
+                //AircraftType aircraftType = new AircraftType();
+                Spinner aircraftSpinner = view.findViewById(R.id.spinner_aircraft);
+                Log.d("NANCY", "selectedItem: "+aircraftSpinner.getSelectedItem());
+                selectedAircraftType = (AircraftType)aircraftSpinner.getSelectedItem();
+                readWaypoints(selectedAircraftType.getId());
             }
         });
         downloadButton = view.findViewById(R.id.btn_download);
@@ -63,6 +70,36 @@ public class AircraftFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState){
         super.onActivityCreated(savedInstanceState);
         readData();
+    }
+    private void readWaypoints(Integer aircraft_id){
+        ReadWaypoints readWaypoints = new ReadWaypoints(this);
+        readWaypoints.execute(aircraft_id);
+    }
+    private static class ReadWaypoints extends AsyncTask<Integer, Void, List<InspectionWaypoint>>{
+        private WeakReference<AircraftFragment> fragmentReference;
+        ReadWaypoints(AircraftFragment fragment){
+            fragmentReference = new WeakReference<>(fragment);
+        }
+        @Override
+        protected List<InspectionWaypoint> doInBackground(Integer...params){
+            int aircraft_id = params[0];
+            return DatabaseClient
+                    .getInstance(MApplication.getContext())
+                    .getAppDatabase()
+                    .inspectionWaypointDao()
+                    .findWaypointsById(aircraft_id);
+        }
+        @Override
+        protected void onPostExecute(List<InspectionWaypoint> waypoints){
+            super.onPostExecute(waypoints);
+            AircraftFragment fragment = fragmentReference.get();
+            TextView headingTextView = fragment.view.findViewById(R.id.heading);
+            String headingString = headingTextView.getText().toString();
+            Log.d("NANCY","headingString: "+headingString);
+            double heading = Double.parseDouble(headingString);
+            Log.d("NANCY", "heading: "+heading);
+            fragment.mCallback.onAircraftNextSelected(fragment.selectedAircraftType, waypoints, heading);
+        }
     }
     private void readData(){
         ReadData readData = new ReadData(this);
@@ -213,6 +250,6 @@ public class AircraftFragment extends Fragment {
         mCallback = (AircraftFragment.OnAircraftNextSelectedListener)activity;
     }
     public interface OnAircraftNextSelectedListener {
-        void onAircraftNextSelected(AircraftType aircraft);
+        void onAircraftNextSelected(AircraftType aircraft, List<InspectionWaypoint> waypoints, double heading);
     }
 }

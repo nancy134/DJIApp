@@ -142,7 +142,8 @@ public class LoadCSVFragment extends Fragment {
         @Override
         protected void onPostExecute(List<AircraftType> aircraftTypes){
             super.onPostExecute(aircraftTypes);
-            if (aircraftTypes == null){
+            Log.d("NANCY","size: "+aircraftTypes.size());
+            if (aircraftTypes == null || aircraftTypes.size() == 0){
                 Log.d("NANCY", "Aircraft not found...saving aircraft");
                 LoadCSVFragment fragment = fragmentReference.get();
                 fragment.saveAircraft();

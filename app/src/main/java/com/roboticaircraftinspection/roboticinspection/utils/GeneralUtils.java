@@ -217,4 +217,13 @@ public class GeneralUtils {
         geoArray. add(movePoint(homeLatitude, homeLongitude, droneOrientation, -(10 + 6)));
         return geoArray;
     }
+    public static double getRadius(double x, double y){
+        return Math.sqrt((x*x) + (y*y));
+    }
+    public static double getX(double x, double y, double heading){
+        return getRadius(x, y) * (Math.cos(Math.toRadians(heading)));
+    }
+    public static double getY(double x, double y, double heading){
+        return getRadius(x, y) * (Math.sin(Math.toRadians(heading)));
+    }
 }

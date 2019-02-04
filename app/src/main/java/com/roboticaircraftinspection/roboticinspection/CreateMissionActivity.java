@@ -9,12 +9,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.roboticaircraftinspection.roboticinspection.db.AircraftType;
+import com.roboticaircraftinspection.roboticinspection.db.InspectionWaypoint;
 import com.roboticaircraftinspection.roboticinspection.models.CameraInput;
 import com.roboticaircraftinspection.roboticinspection.models.MissionOptions;
 import com.roboticaircraftinspection.roboticinspection.models.MissionType;
 import com.roboticaircraftinspection.roboticinspection.models.OtherEndInput;
 import com.roboticaircraftinspection.roboticinspection.models.StartMission;
 import com.roboticaircraftinspection.roboticinspection.models.TaskType;
+
+import java.util.List;
 
 public class CreateMissionActivity extends AppCompatActivity
     implements MissionOptionsFragment.OnOptionsNextSelectedListener,
@@ -27,7 +30,8 @@ public class CreateMissionActivity extends AppCompatActivity
         StartingPointFragment.OnStartingPointNextSelectedListener,
         AircraftFragment.OnAircraftNextSelectedListener,
         TaskSelectionFragment.OnTaskSelectionNextSelectedListener,
-        LoadCSVFragment.OnLoadCSVNextSelectedListener
+        LoadCSVFragment.OnLoadCSVNextSelectedListener,
+        InitializeWaypointFragment.OnInitializeWaypointNextSelectedListener
 {
 
     MissionOptions mMissionOptions;
@@ -167,12 +171,17 @@ public class CreateMissionActivity extends AppCompatActivity
         finish();
     }
     @Override
-    public void onAircraftNextSelected(AircraftType aircraftType){
-
+    public void onAircraftNextSelected(AircraftType aircraftType, List<InspectionWaypoint> waypoints, double heading){
+        InspectionApplication.waypointTimeline = new WaypointTimeline();
+        InspectionApplication.waypointTimeline.setWaypoints(waypoints);
+        InspectionApplication.waypointTimeline.setHeading(heading);
+        InitializeWaypointFragment initializeWaypointFragment = new InitializeWaypointFragment();
+        initializeWaypointFragment.setTimeline(InspectionApplication.waypointTimeline);
+        initializeWaypointFragment.setOnInitializeWaypointNextSelectedListener(this);
+        loadFragment(initializeWaypointFragment);
     }
     @Override
     public void onTaskSelectionNextSelected(TaskType selectedTaskType){
-        Log.d("NANCY", "selectedTaskType: "+selectedTaskType.toString());
         if (selectedTaskType.id() == TaskType.LOAD_WAYPOINTS.id()){
             LoadCSVFragment loadCSVFragment = new LoadCSVFragment();
             loadCSVFragment.setOnLoadCSVNextSelectedListener(this);
@@ -184,8 +193,14 @@ public class CreateMissionActivity extends AppCompatActivity
         }
     }
     @Override
+    public void onInitializeWaypointNextSelected(){
+        InspectionApplication.waypointTimeline.logWaypoints();
+        InspectionApplication.waypointTimeline.initTimeline();
+        finish();
+    }
+    @Override
     public void onLoadCSVNextSelected(){
-        Log.d("NANCY","CSV File loaded");
+        finish();
     }
     private void loadFragment(Fragment fragment) {
         // create a FragmentManager

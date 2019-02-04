@@ -19,6 +19,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 style="@android:style/Widget.Holo.Spinner"/>
+            <EditText
+                android:id="@+id/heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="@string/enter_heading"
+                android:inputType="numberDecimal"
+                tools:targetApi="o"
+                android:importantForAutofill="no"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

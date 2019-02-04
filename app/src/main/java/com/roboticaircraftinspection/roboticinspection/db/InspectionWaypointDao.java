@@ -19,6 +19,9 @@ public interface InspectionWaypointDao {
     @Query("DELETE FROM inspectionwaypoint")
     void deleteAll();
 
+    @Query("SELECT * FROM inspectionwaypoint WHERE aircraft_id=:id")
+    List<InspectionWaypoint> findWaypointsById(int id);
+
     @Insert
     Long insert(InspectionWaypoint inspectionWaypoint);
 

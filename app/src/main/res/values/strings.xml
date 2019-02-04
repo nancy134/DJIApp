@@ -24,6 +24,7 @@
     <string name="aircraft_found">Aircraft found</string>
     <string name="drone_orientation_label">Drone orientation: </string>
     <string name="model_label">Model: </string>
+    <string name="orientation_mode_label">Orientation Mode:</string>
     <string name="home_height_label">Home height: </string>
     <string name="flight_orientation_mode_label">Flight orientation mode: </string>
     <string name="local_course">Lock course using current heading</string>
@@ -34,6 +35,8 @@
     <string name="serial_number_label">Serial number: </string>
     <string name="homepoint_latitude_label">Homepoint latitude:</string>
     <string name="homepoint_longitude_label">Homepoint longitude:</string>
+    <string name="home_latitude_label">Home latitude:</string>
+    <string name="home_longitude_label">Home longitude:</string>
     <string name="test_application">Test Application</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
@@ -51,4 +54,5 @@
     <string name="load_csv">Load CSV File</string>
     <string name="save_to_database">Save to database</string>
     <string name="cancel">Cancel</string>
+    <string name="enter_heading">Enter aircraft heading</string>
 </resources>
