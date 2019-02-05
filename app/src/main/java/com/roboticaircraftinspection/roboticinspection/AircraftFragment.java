@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ public class AircraftFragment extends Fragment {
     List<AircraftRemote> aircraftRemoteList;
     AircraftType selectedAircraftType;
     AircraftFragment.OnAircraftNextSelectedListener mCallback;
+    EditText headingText;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,6 +69,8 @@ public class AircraftFragment extends Fragment {
                 downloadData();
             }
         });
+        headingText = view.findViewById(R.id.heading);
+        headingText.setText("360");
         return view;
     }
     public void onActivityCreated(Bundle savedInstanceState){
@@ -95,8 +99,7 @@ public class AircraftFragment extends Fragment {
         protected void onPostExecute(List<InspectionWaypoint> waypoints){
             super.onPostExecute(waypoints);
             AircraftFragment fragment = fragmentReference.get();
-            TextView headingTextView = fragment.view.findViewById(R.id.heading);
-            String headingString = headingTextView.getText().toString();
+            String headingString = fragment.headingText.getText().toString();
             Log.d("NANCY","headingString: "+headingString);
             double heading = Double.parseDouble(headingString);
             Log.d("NANCY", "heading: "+heading);
