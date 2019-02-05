@@ -47,10 +47,10 @@
     <string name="download_data">Download data...</string>
     <string name="read_data">Read Data...</string>
     <string name="delete_data">Delete Data...</string>
-    <string name="select_aircraft">Select aircraft:</string>
+    <string name="select_aircraft">Select previously loaded waypoint file:</string>
     <string name="task_select_task">Select task</string>
-    <string name="task_load_waypoints">Load Waypoint file</string>
-    <string name="task_inspect_aircraft">Inspect aircraft</string>
+    <string name="task_load_waypoints">Load waypoint CSV file</string>
+    <string name="task_inspect_aircraft">Run loaded waypoint mission</string>
     <string name="load_csv">Load CSV File</string>
     <string name="save_to_database">Save to database</string>
     <string name="cancel">Cancel</string>

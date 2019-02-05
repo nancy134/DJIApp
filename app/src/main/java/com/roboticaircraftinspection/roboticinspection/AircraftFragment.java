@@ -46,6 +46,7 @@ public class AircraftFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_aircraft, container, false);
         progressBar = view.findViewById(R.id.progress_aircraft);
+        progressBar .setVisibility(View.GONE);
         nextButton = view.findViewById(R.id.btn_next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +59,7 @@ public class AircraftFragment extends Fragment {
             }
         });
         downloadButton = view.findViewById(R.id.btn_download);
+        downloadButton.setVisibility(View.GONE);
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -35,6 +35,8 @@ public class LoadCSVFragment extends Fragment {
     String CSVFilePath;
     int aircraft_id;
     int FILE_REQUEST_CODE = 0;
+    int waypointCount;
+    int waypointIndex;
     LoadCSVFragment.OnLoadCSVNextSelectedListener mCallback;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -44,7 +46,8 @@ public class LoadCSVFragment extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCallback.onLoadCSVNextSelected();
+                findAircraftByName();
+                //mCallback.onLoadCSVNextSelected();
             }
         });
         loadCSVButton = view.findViewById(R.id.btn_load_csv);
@@ -66,6 +69,7 @@ public class LoadCSVFragment extends Fragment {
             }
         });
         saveButton = view.findViewById(R.id.save_to_database);
+        saveButton.setVisibility(View.GONE);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +81,8 @@ public class LoadCSVFragment extends Fragment {
         return view;
     }
     void saveWaypoints(Long aircraft_id){
+        waypointCount = waypoints.size()-2;
+        waypointIndex = 0;
         for (int i = 2; i < waypoints.size(); i++){
             String[] row = waypoints.get(i);
             InspectionWaypoint inspectionWaypoint = new InspectionWaypoint();
@@ -143,11 +149,12 @@ public class LoadCSVFragment extends Fragment {
         protected void onPostExecute(List<AircraftType> aircraftTypes){
             super.onPostExecute(aircraftTypes);
             Log.d("NANCY","size: "+aircraftTypes.size());
+            LoadCSVFragment fragment = fragmentReference.get();
             if (aircraftTypes == null || aircraftTypes.size() == 0){
                 Log.d("NANCY", "Aircraft not found...saving aircraft");
-                LoadCSVFragment fragment = fragmentReference.get();
                 fragment.saveAircraft();
             } else
+                fragment.mCallback.onLoadCSVNextSelected();
                 Log.d("NANCY", "Aircraft found in database...not saving");
         }
     }
@@ -184,6 +191,12 @@ public class LoadCSVFragment extends Fragment {
         protected void onPostExecute(Long id){
             super.onPostExecute(id);
             Log.d("NANCY", "Waypoint saved. id: "+id);
+            LoadCSVFragment fragment = fragmentReference.get();
+            fragment.waypointIndex++;
+            Log.d("NANCY","waypointCount: "+fragment.waypointCount+" waypointIndex: "+fragment.waypointIndex);
+            if (fragment.waypointCount == fragment.waypointIndex){
+                fragment.mCallback.onLoadCSVNextSelected();
+            }
         }
     }
     @Override

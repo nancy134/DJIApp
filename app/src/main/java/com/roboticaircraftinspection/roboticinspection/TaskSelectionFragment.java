@@ -7,9 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.roboticaircraftinspection.roboticinspection.models.TaskType;
 
@@ -17,31 +17,30 @@ import com.roboticaircraftinspection.roboticinspection.models.TaskType;
 public class TaskSelectionFragment extends Fragment {
     View view;
     Button nextButton;
+    RadioGroup taskGroup;
+    RadioButton taskLoadCSV;
+    RadioButton taskRunMission;
+
     TaskSelectionFragment.OnTaskSelectionNextSelectedListener mCallback;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_taskselection, container, false);
 
-        Spinner taskSpinner = view.findViewById(R.id.spinner_task);
-        final ArrayAdapter<TaskType> taskListAdapter = new ArrayAdapter<>(
-                view.getContext(),
-                R.layout.support_simple_spinner_dropdown_item,
-                TaskType.values()
-        );
-        taskSpinner.setAdapter(taskListAdapter);
-        taskListAdapter.notifyDataSetChanged();
-
         nextButton = view.findViewById(R.id.btn_next);
+        taskGroup = view.findViewById(R.id.radioTask);
+        taskLoadCSV = view.findViewById(R.id.radioLoadCSV);
+        taskRunMission = view.findViewById(R.id.radioRunMission);
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Spinner taskType = view.findViewById(R.id.spinner_task);
                 TaskType selectedTaskType = null;
-                for (TaskType m: TaskType.values()){
-                    if (m.position() == taskType.getSelectedItemId()){
-                        selectedTaskType = m;
-                    }
+                int selectedId = taskGroup.getCheckedRadioButtonId();
+                if (selectedId == R.id.radioLoadCSV) {
+                    selectedTaskType = TaskType.LOAD_WAYPOINTS;
+                } else if (selectedId == R.id.radioRunMission) {
+                    selectedTaskType = TaskType.INSPECT_AIRCRAFT;
                 }
                 mCallback.onTaskSelectionNextSelected(selectedTaskType);
             }

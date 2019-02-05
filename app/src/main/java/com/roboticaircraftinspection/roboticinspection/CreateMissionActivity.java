@@ -200,7 +200,9 @@ public class CreateMissionActivity extends AppCompatActivity
     }
     @Override
     public void onLoadCSVNextSelected(){
-        finish();
+        AircraftFragment aircraftFragment = new AircraftFragment();
+        aircraftFragment.setOnAircraftNextSelectedListener(this);
+        loadFragment(aircraftFragment);
     }
     private void loadFragment(Fragment fragment) {
         // create a FragmentManager

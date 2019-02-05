@@ -56,6 +56,8 @@ public class AircraftType implements Serializable {
     }
     @Override
     public @NonNull String toString() {
-        return getName();
+        String path = getName();
+        String filename = path.substring(path.lastIndexOf('/')+1);
+        return filename;
     }
 }
