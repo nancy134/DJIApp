@@ -26,8 +26,6 @@ public class CreateMissionActivity extends AppCompatActivity
         InitializeZonesFragment.OnInitializeNextSelectedListener,
         HomePointFragment.OnHomePointNextSelectedListener,
         InitializeTestFragment.OnInitializeTestNextSelectedListener,
-        EndpointFragment.OnEndpointNextSelectedListener,
-        StartingPointFragment.OnStartingPointNextSelectedListener,
         AircraftFragment.OnAircraftNextSelectedListener,
         TaskSelectionFragment.OnTaskSelectionNextSelectedListener,
         LoadCSVFragment.OnLoadCSVNextSelectedListener,
@@ -153,22 +151,6 @@ public class CreateMissionActivity extends AppCompatActivity
     }
     @Override
     public void onInitializeTestNextSelected() {
-        EndpointFragment endpointFragment = new EndpointFragment();
-        endpointFragment.setOnEndpointNextSelectedListener(this);
-        endpointFragment.setTimeline(InspectionApplication.mTestTimeline);
-        loadFragment(endpointFragment);
-    }
-    @Override
-    public void onEndpointNextSelected() {
-        StartingPointFragment startingPointFragment = new StartingPointFragment();
-        startingPointFragment.setOnStartingPointNextSelectedListener(this);
-        startingPointFragment.setTimeline(InspectionApplication.mTestTimeline);
-        loadFragment(startingPointFragment);
-    }
-    @Override
-    public void onStartingPointNextSelected() {
-        InspectionApplication.mTestTimeline.initTimeline();
-        finish();
     }
     @Override
     public void onAircraftNextSelected(AircraftType aircraftType, List<InspectionWaypoint> waypoints, double heading){
