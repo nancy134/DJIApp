@@ -75,9 +75,9 @@ public class ItemArrayAdapter extends ArrayAdapter<String[]> {
             viewHolder = (ItemViewHolder)row.getTag();
         }
         String[] stat = getItem(position);
-        viewHolder.XLatM.setText(stat[2]);
-        viewHolder.YLonM.setText(stat[3]);
-        viewHolder.alt.setText(stat[4]);
+        viewHolder.XLatM.setText(stat[0]);
+        viewHolder.YLonM.setText(stat[1]);
+        viewHolder.alt.setText(stat[2]);
         /*
         viewHolder.latitude.setText(stat[0]);
         viewHolder.longitude.setText(stat[1]);

@@ -60,9 +60,31 @@ public class LoadCSVFragment extends Fragment {
                         CSVFilePath = path;
                         CSVFile csvFile = new CSVFile(path);
                         waypoints = csvFile.read();
-                        for(String[] waypointData:waypoints ) {
-                            itemArrayAdapter.add(waypointData);
+                        String[] heading = waypoints.get(0);
+                        int indexX=0, indexY=0, indexAltitude=0, indexHeading=0;
+                        for (int i = 0; i< heading.length; i++){
+                            if (heading[i].toLowerCase().contains("heading")){
+                                indexHeading = i;
+                            } else if (heading[i].toLowerCase().contains("altitude")){
+                                indexAltitude = i;
+                            } else if (heading[i].toLowerCase().contains("x lat")){
+                                indexX = i;
+                            } else if (heading[i].toLowerCase().contains("y lon")){
+                                indexY = i;
+                            }
                         }
+                        for (int i = 0; i< waypoints.size(); i++){
+                            String[] waypointData = new String[4];
+                            waypointData[0] = waypoints.get(i)[indexX];
+                            waypointData[1] = waypoints.get(i)[indexY];
+                            waypointData[2] = waypoints.get(i)[indexAltitude];
+                            waypointData[3] = waypoints.get(i)[indexHeading];
+                            itemArrayAdapter.add(waypointData);
+
+                        }
+                        //for(String[] waypointData:waypoints ) {
+                        //    itemArrayAdapter.add(waypointData);
+                        //}
                         listView.setAdapter(itemArrayAdapter);
                     }
                 }).build().show();
@@ -83,14 +105,27 @@ public class LoadCSVFragment extends Fragment {
     void saveWaypoints(Long aircraft_id){
         waypointCount = waypoints.size()-2;
         waypointIndex = 0;
+		String[] heading = waypoints.get(0);
+		int indexX=0, indexY=0, indexAltitude=0, indexHeading=0;
+		for (int i = 0; i< heading.length; i++){
+			if (heading[i].toLowerCase().contains("heading")){
+				indexHeading = i;
+			} else if (heading[i].toLowerCase().contains("altitude")){
+				indexAltitude = i;
+			} else if (heading[i].toLowerCase().contains("x lat")){
+				indexX = i;
+			} else if (heading[i].toLowerCase().contains("y lon")){
+				indexY = i;
+			}
+		}
         for (int i = 2; i < waypoints.size(); i++){
             String[] row = waypoints.get(i);
             InspectionWaypoint inspectionWaypoint = new InspectionWaypoint();
             inspectionWaypoint.setAircraft_id(aircraft_id.intValue());
-            inspectionWaypoint.setX(Double.valueOf(row[2]));
-            inspectionWaypoint.setY(Double.valueOf(row[3]));
-            inspectionWaypoint.setAltitude(Double.valueOf(row[4]));
-            inspectionWaypoint.setHeading(Double.valueOf(row[5]));
+            inspectionWaypoint.setX(Double.valueOf(row[indexX]));
+            inspectionWaypoint.setY(Double.valueOf(row[indexY]));
+            inspectionWaypoint.setAltitude(Double.valueOf(row[indexAltitude]));
+            inspectionWaypoint.setHeading(Double.valueOf(row[indexHeading]));
             SaveWaypoint saveWaypoint = new SaveWaypoint(this);
             saveWaypoint.execute(inspectionWaypoint);
         }
