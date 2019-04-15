@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
-import com.roboticaircraftinspection.roboticinspection.db.AircraftType;
 import com.roboticaircraftinspection.roboticinspection.db.InspectionWaypoint;
 import com.roboticaircraftinspection.roboticinspection.models.InitializeWaypoint;
 import com.roboticaircraftinspection.roboticinspection.utils.GeneralUtils;
@@ -36,8 +35,6 @@ public class WaypointTimeline extends Timeline {
     private InitializeWaypoint initializeWaypoint;
     private WaypointTimeline.OnInitializeWaypointListener mCallbackInitialize;
     private MissionControl missionControl;
-    private Model model;
-    private FlightController flightController;
     private int HOME_HEIGHT = 10;
     private String orientationMode;
     private int satelliteCount;
@@ -45,7 +42,9 @@ public class WaypointTimeline extends Timeline {
     private int gpsSignalLevel;
     private String serialNumber;
     private List<InspectionWaypoint> inspectionWaypoints;
+    private List<Waypoint> allWaypoints;
     private double aircraftHeading;
+    private int currentTimeline = 0;
 
     WaypointTimeline(){
         initializeWaypoint = new InitializeWaypoint();
@@ -62,12 +61,12 @@ public class WaypointTimeline extends Timeline {
         missionControl = MissionControl.getInstance();
         if (product instanceof Aircraft) {
 
-            model = product.getModel();
+            Model model = product.getModel();
             initializeWaypoint.aircraftFound = true;
             initializeWaypoint.model = model.name();
             mCallbackInitialize.onInitializeWaypoint(initializeWaypoint);
 
-            flightController = ((Aircraft) product).getFlightController();
+            FlightController flightController = ((Aircraft) product).getFlightController();
 
             flightController.setGoHomeHeightInMeters(HOME_HEIGHT, new CommonCallbacks.CompletionCallback() {
                 @Override
@@ -123,17 +122,8 @@ public class WaypointTimeline extends Timeline {
         }
     }
     void initTimeline(){
-        missionControl = MissionControl.getInstance();
-        MissionControl.Listener listener = new MissionControl.Listener() {
-            @Override
-            public void onEvent(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {
-                updateTimelineStatus(element, event, error);
-            }
-        };
-        List<TimelineElement> elements = new ArrayList<>();
-        elements.add(new TakeOffAction());
-        List<Waypoint> waypoints = new LinkedList<>();
-        WaypointMission.Builder waypointMissionBuilder = GeneralUtils.getWaypointMissionBuilder();
+        allWaypoints = new LinkedList<>();
+
         double startLatitude, startLongitude, latitude = 0, longitude = 0, altitude;
         for (int i=0; i<inspectionWaypoints.size(); i++) {
 
@@ -156,37 +146,79 @@ public class WaypointTimeline extends Timeline {
             longitude = startLongitude + y * GeneralUtils.ONE_METER_OFFSET;
             altitude = (float) inspectionWaypoints.get(i).getAltitude();
             Waypoint point = new Waypoint(latitude, longitude,(float) altitude);
-            waypoints.add(point);
+            allWaypoints.add(point);
         }
+    }
 
-        Log.d("TIMELINE","waypoints.size: "+waypoints.size());
-        waypointMissionBuilder.waypointList(waypoints).waypointCount(waypoints.size());
-        WaypointMission waypointMission = waypointMissionBuilder.build();
-        TimelineElement timelineElement = TimelineMission.elementFromWaypointMission(waypointMission);
-        if (timelineElement != null) {
-            Log.d("TIMELINE", "Waypoint: " + timelineElement.toString());
-            addWaypointReachedTrigger(timelineElement, 1);
-            elements.add(timelineElement);
-        } else {
-            Log.d("TIMELINE", "Waypoint not added");
-        }
+    void startTimeline() {
+        missionControl = MissionControl.getInstance();
+        MissionControl.Listener listener = new MissionControl.Listener() {
+            @Override
+            public void onEvent(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {
+                updateTimelineStatus(element, event, error);
+                if (event == TimelineEvent.FINISHED && element == null){
 
-        elements.add(new GoHomeAction());
-        addAircraftLandedTrigger(missionControl);
+                    int MAX_WAYPOINTS = WaypointMission.MAX_WAYPOINT_COUNT;
+                    //MAX_WAYPOINTS = 4;
+                    int numWaypointMissions = (int)Math.floor(inspectionWaypoints.size()/MAX_WAYPOINTS) + 1;
+                    ++currentTimeline;
+                    if (currentTimeline < numWaypointMissions) {
+                        nextTimeline(currentTimeline);
+                    }
+                }
+            }
+        };
+        missionControl.addListener(listener);
 
         if (missionControl.scheduledCount() > 0) {
             missionControl.unscheduleEverything();
             missionControl.removeAllListeners();
         }
-
-        missionControl.scheduleElements(elements);
-        missionControl.addListener(listener);
+        nextTimeline(currentTimeline);
     }
+    void nextTimeline(int i){
+        int MAX_WAYPOINTS = WaypointMission.MAX_WAYPOINT_COUNT;
+        //MAX_WAYPOINTS = 4;
+        int numWaypointMissions = (int)Math.floor(inspectionWaypoints.size()/MAX_WAYPOINTS) + 1;
 
-    void startTimeline() {
+        Log.d("TIMELINE","i: "+i);
+
+        if (missionControl.scheduledCount() > 0) {
+            missionControl.unscheduleEverything();
+        }
+        List<TimelineElement> elements = new ArrayList<>();
+
+        if (i == 0){
+            Log.d("TIMELINE","Add Takeoff action");
+            elements.add(new TakeOffAction());
+        }
+        WaypointMission.Builder waypointMissionBuilder = GeneralUtils.getWaypointMissionBuilder();
+        List<Waypoint> waypoints;
+        if (numWaypointMissions == 1){
+            waypoints = allWaypoints;
+        } else {
+            waypoints = allWaypoints.subList(i * MAX_WAYPOINTS, (i * MAX_WAYPOINTS) + MAX_WAYPOINTS - 1);
+        }
+        waypointMissionBuilder.waypointList(waypoints).waypointCount(waypoints.size());
+        WaypointMission waypointMission = waypointMissionBuilder.build();
+        TimelineElement timelineElement = TimelineMission.elementFromWaypointMission(waypointMission);
+        Log.d("TIMELINE","Add Timeline elements");
+        elements.add(timelineElement);
+        addWaypointReachedTrigger(timelineElement,1);
+
+        if (i == numWaypointMissions-1){
+            Log.d("TIMELINE","Add Go Home Action");
+            elements.add(new GoHomeAction());
+            addAircraftLandedTrigger(missionControl);
+            addBatteryPowerLevelTrigger(missionControl);
+        }
+        missionControl.scheduleElements(elements);
+
         if (MissionControl.getInstance().scheduledCount() > 0) {
+            Log.d("TIMELINE","StartTimeline");
             MissionControl.getInstance().startTimeline();
         }
+
     }
     public void setWaypoints(List<InspectionWaypoint> waypoints){
         this.inspectionWaypoints = waypoints;
@@ -194,7 +226,7 @@ public class WaypointTimeline extends Timeline {
     public void setHeading(double heading){
         this.aircraftHeading = heading;
     }
-    public void logWaypoints(){
+    void logWaypoints(){
         double homeLatitude = 35.06073019;
         double homeLongitude = -89.9636959;
         double startLatitude, startLongitude, latitude = 0, longitude = 0, altitude;
