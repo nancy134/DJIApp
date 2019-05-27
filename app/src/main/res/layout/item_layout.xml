@@ -17,5 +17,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/item_alt"
         android:layout_weight="1"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_heading"
+        android:layout_weight="1"/>
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_gimbalangle"
+        android:layout_weight="1"/>
 
 </LinearLayout>

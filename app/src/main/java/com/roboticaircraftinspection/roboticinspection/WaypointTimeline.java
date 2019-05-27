@@ -16,6 +16,8 @@ import java.util.List;
 import dji.common.error.DJIError;
 import dji.common.flightcontroller.FlightControllerState;
 import dji.common.mission.waypoint.Waypoint;
+import dji.common.mission.waypoint.WaypointAction;
+import dji.common.mission.waypoint.WaypointActionType;
 import dji.common.mission.waypoint.WaypointMission;
 import dji.common.model.LocationCoordinate2D;
 import dji.common.product.Model;
@@ -125,6 +127,8 @@ public class WaypointTimeline extends Timeline {
         allWaypoints = new LinkedList<>();
 
         double startLatitude, startLongitude, latitude = 0, longitude = 0, altitude;
+        double heading;
+        int gimbalPitch;
         for (int i=0; i<inspectionWaypoints.size(); i++) {
 
             if (i ==0){
@@ -142,10 +146,24 @@ public class WaypointTimeline extends Timeline {
                     inspectionWaypoints.get(i).getX(),
                     inspectionWaypoints.get(i).getY(),
                     aircraftHeading);
+
             latitude = startLatitude + x * GeneralUtils.ONE_METER_OFFSET;
             longitude = startLongitude + y * GeneralUtils.ONE_METER_OFFSET;
             altitude = (float) inspectionWaypoints.get(i).getAltitude();
+            heading = (double) inspectionWaypoints.get(i).getHeading();
+            // Calculate heading
+            heading = this.aircraftHeading + heading;
+            if (heading > 180) heading = heading - 360;
+            if (heading < -180) heading = heading + 360;
+
+            gimbalPitch = (int) inspectionWaypoints.get(i).getGimbalPitch();
+            Log.d("TIMELINE","latitude"+String.valueOf(latitude)+" longitude: "+String.valueOf(longitude)+" heading: "+String.valueOf(heading)+" gimblepitch: "+String.valueOf(gimbalPitch));
             Waypoint point = new Waypoint(latitude, longitude,(float) altitude);
+            WaypointAction rotateAircraftAction = new WaypointAction(WaypointActionType.ROTATE_AIRCRAFT,(int)heading);
+            WaypointAction gimbalPitchAction = new WaypointAction(WaypointActionType.GIMBAL_PITCH,gimbalPitch);
+            point.addAction(rotateAircraftAction);
+            point.addAction(gimbalPitchAction);
+            Log.d("TIMELINE","point: "+point.toString());
             allWaypoints.add(point);
         }
     }
@@ -157,7 +175,7 @@ public class WaypointTimeline extends Timeline {
             public void onEvent(@Nullable TimelineElement element, TimelineEvent event, DJIError error) {
                 updateTimelineStatus(element, event, error);
                 if (event == TimelineEvent.FINISHED && element == null){
-
+                    Log.d("TIMELINE","Timeline Finished");
                     int MAX_WAYPOINTS = WaypointMission.MAX_WAYPOINT_COUNT;
                     //MAX_WAYPOINTS = 4;
                     int numWaypointMissions = (int)Math.floor(inspectionWaypoints.size()/MAX_WAYPOINTS) + 1;
@@ -177,6 +195,7 @@ public class WaypointTimeline extends Timeline {
         nextTimeline(currentTimeline);
     }
     void nextTimeline(int i){
+        Log.d("TIMELINE","nextTimeline");
         int MAX_WAYPOINTS = WaypointMission.MAX_WAYPOINT_COUNT;
         //MAX_WAYPOINTS = 4;
         int numWaypointMissions = (int)Math.floor(inspectionWaypoints.size()/MAX_WAYPOINTS) + 1;

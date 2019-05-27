@@ -61,7 +61,7 @@ public class LoadCSVFragment extends Fragment {
                         CSVFile csvFile = new CSVFile(path);
                         waypoints = csvFile.read();
                         String[] heading = waypoints.get(0);
-                        int indexX=0, indexY=0, indexAltitude=0, indexHeading=0;
+                        int indexX=0, indexY=0, indexAltitude=0, indexHeading=0, indexGimbalPitch=0;
                         for (int i = 0; i< heading.length; i++){
                             if (heading[i].toLowerCase().contains("heading")){
                                 indexHeading = i;
@@ -71,14 +71,17 @@ public class LoadCSVFragment extends Fragment {
                                 indexX = i;
                             } else if (heading[i].toLowerCase().contains("y lon")){
                                 indexY = i;
+                            } else if (heading[i].toLowerCase().contains("gimbalpitchangle")){
+                                indexGimbalPitch = i;
                             }
                         }
                         for (int i = 0; i< waypoints.size(); i++){
-                            String[] waypointData = new String[4];
+                            String[] waypointData = new String[5];
                             waypointData[0] = waypoints.get(i)[indexX];
                             waypointData[1] = waypoints.get(i)[indexY];
                             waypointData[2] = waypoints.get(i)[indexAltitude];
                             waypointData[3] = waypoints.get(i)[indexHeading];
+                            waypointData[4] = waypoints.get(i)[indexGimbalPitch];
                             itemArrayAdapter.add(waypointData);
 
                         }
@@ -106,7 +109,7 @@ public class LoadCSVFragment extends Fragment {
         waypointCount = waypoints.size()-2;
         waypointIndex = 0;
 		String[] heading = waypoints.get(0);
-		int indexX=0, indexY=0, indexAltitude=0, indexHeading=0;
+		int indexX=0, indexY=0, indexAltitude=0, indexHeading=0, indexGimbalPitch=0;
 		for (int i = 0; i< heading.length; i++){
 			if (heading[i].toLowerCase().contains("heading")){
 				indexHeading = i;
@@ -116,7 +119,9 @@ public class LoadCSVFragment extends Fragment {
 				indexX = i;
 			} else if (heading[i].toLowerCase().contains("y lon")){
 				indexY = i;
-			}
+			} else if (heading[i].toLowerCase().contains("gimbalpitchangle")){
+			    indexGimbalPitch = i;
+            }
 		}
         for (int i = 2; i < waypoints.size(); i++){
             String[] row = waypoints.get(i);
@@ -126,6 +131,7 @@ public class LoadCSVFragment extends Fragment {
             inspectionWaypoint.setY(Double.valueOf(row[indexY]));
             inspectionWaypoint.setAltitude(Double.valueOf(row[indexAltitude]));
             inspectionWaypoint.setHeading(Double.valueOf(row[indexHeading]));
+            inspectionWaypoint.setGimbalPitch(Integer.parseInt(row[indexGimbalPitch]));
             SaveWaypoint saveWaypoint = new SaveWaypoint(this);
             saveWaypoint.execute(inspectionWaypoint);
         }
@@ -136,7 +142,7 @@ public class LoadCSVFragment extends Fragment {
             String[] secondRow = waypoints.get(1);
             AircraftType aircraftType = new AircraftType();
             aircraftType.setName(CSVFilePath);
-            aircraftType.setHeading(Double.valueOf(secondRow[5]));
+            aircraftType.setHeading(Double.valueOf(secondRow[3]));
             aircraftType.setLatitude(Double.valueOf(secondRow[0]));
             aircraftType.setLongitude(Double.valueOf(secondRow[1]));
             LoadCSVFragment.SaveAircraft saveAircraft = new LoadCSVFragment.SaveAircraft(this);
@@ -198,7 +204,8 @@ public class LoadCSVFragment extends Fragment {
             double x,
             double y,
             double altitude,
-            double heading)
+            double heading,
+            int gimbalPitch)
     {
         InspectionWaypoint inspectionWaypoint = new InspectionWaypoint();
         inspectionWaypoint.setAircraft_id(aircraft_id);
@@ -206,6 +213,7 @@ public class LoadCSVFragment extends Fragment {
         inspectionWaypoint.setY(y);
         inspectionWaypoint.setAltitude(altitude);
         inspectionWaypoint.setHeading(heading);
+        inspectionWaypoint.setGimbalPitch(gimbalPitch);
         SaveWaypoint saveWaypoint = new SaveWaypoint(this);
         saveWaypoint.execute(inspectionWaypoint);
     }

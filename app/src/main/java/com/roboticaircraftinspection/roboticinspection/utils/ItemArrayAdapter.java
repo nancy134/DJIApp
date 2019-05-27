@@ -19,6 +19,8 @@ public class ItemArrayAdapter extends ArrayAdapter<String[]> {
         TextView XLatM;
         TextView YLonM;
         TextView alt;
+        TextView heading;
+        TextView gimbalAngle;
         /*
         TextView latitude;
         TextView longitude;
@@ -59,6 +61,8 @@ public class ItemArrayAdapter extends ArrayAdapter<String[]> {
             viewHolder.XLatM = (TextView) row.findViewById(R.id.item_x);
             viewHolder.YLonM = (TextView) row.findViewById(R.id.item_y);
             viewHolder.alt = (TextView) row.findViewById(R.id.item_alt);
+            viewHolder.heading = (TextView) row.findViewById(R.id.item_heading);
+            viewHolder.gimbalAngle = (TextView) row.findViewById(R.id.item_gimbalangle);
             /*
              viewHolder.latitude = (TextView)row.findViewById(R.id.item_latitude);
             viewHolder.longitude = (TextView)row.findViewById(R.id.item_longitude);
@@ -78,6 +82,8 @@ public class ItemArrayAdapter extends ArrayAdapter<String[]> {
         viewHolder.XLatM.setText(stat[0]);
         viewHolder.YLonM.setText(stat[1]);
         viewHolder.alt.setText(stat[2]);
+        viewHolder.heading.setText(stat[3]);
+        viewHolder.gimbalAngle.setText(stat[4]);
         /*
         viewHolder.latitude.setText(stat[0]);
         viewHolder.longitude.setText(stat[1]);

@@ -41,6 +41,7 @@ class Timeline {
 
     void setTimelinePlanToText(final String s) {
         timelineInfo = timelineInfo + s;
+        Log.d("TIMELINE",s);
     }
     private Trigger.Listener triggerListener = new Trigger.Listener() {
         @Override

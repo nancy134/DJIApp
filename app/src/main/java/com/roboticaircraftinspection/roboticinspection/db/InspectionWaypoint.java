@@ -29,6 +29,9 @@ public class InspectionWaypoint {
     @ColumnInfo(name="heading")
     private double heading;
 
+    @ColumnInfo(name="gimbalPitch")
+    private int gimbalPitch;
+
     int getId(){
         return this.id;
     }
@@ -64,11 +67,18 @@ public class InspectionWaypoint {
         this.altitude = altitude;
     }
 
-    double getHeading(){
+    public double getHeading(){
         return this.heading;
     }
     public void setHeading(double heading){
         this.heading = heading;
+    }
+
+    public int getGimbalPitch() {
+        return this.gimbalPitch;
+    }
+    public void setGimbalPitch(int gimbalPitch){
+        this.gimbalPitch = gimbalPitch;
     }
 
 }
